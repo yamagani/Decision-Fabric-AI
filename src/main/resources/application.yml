@@ -1,0 +1,87 @@
+spring:
+  application:
+    name: decision-fabric-ai
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/decisionfabric}
+    username: ${DB_USERNAME:decisionfabric}
+    password: ${DB_PASSWORD:decisionfabric}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:https://auth.example.com}
+          jwk-set-uri: ${JWT_JWKS_URI:https://auth.example.com/.well-known/jwks.json}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      cloudwatch:
+        enabled: ${CLOUDWATCH_ENABLED:false}
+        namespace: DecisionFabricAI
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      llmProvider:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        sliding-window-size: 10
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+  timelimiter:
+    instances:
+      llmProvider:
+        timeout-duration: ${LLM_TIMEOUT_SECONDS:10}s
+
+dmn:
+  engine:
+    provider: ${DMN_ENGINE_PROVIDER:drools}
+
+ai:
+  provider:
+    config:
+      ssm-parameter-path: ${AI_CONFIG_SSM_PATH:/decision-fabric-ai/ai-provider}
+      poll-interval-seconds: ${AI_CONFIG_POLL_SECONDS:60}
+
+logging:
+  level:
+    root: INFO
+    com.decisionfabric: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+correlation:
+  header-name: X-Correlation-ID

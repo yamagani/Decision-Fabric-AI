@@ -1,0 +1,6 @@
+-- V1: Baseline schema (empty)
+-- Decision-Fabric-AI — Flyway migration baseline
+--
+-- Subsequent migrations add:
+--   V2__rules_schema.sql     — rules, rule_sets, rule_versions tables  (Unit 2)
+--   V3__audit_schema.sql     — decision_audit table                    (Unit 3)

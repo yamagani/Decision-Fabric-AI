@@ -1,0 +1,17 @@
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT Bearer token. Roles are extracted from the `roles` claim.
+        Required roles per endpoint:
+          - decision-consumer: POST /decisions/evaluate
+          - rule-reader: GET /rules/**
+          - rule-admin: POST/PUT/DELETE /rules/**
+          - audit-reader: GET /decisions/history/**
+          - system-admin: /config/**
+
+security:
+  - BearerAuth: []
