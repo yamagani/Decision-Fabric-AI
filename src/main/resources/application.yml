@@ -26,6 +26,11 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: false
 
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 2MB
+
   security:
     oauth2:
       resourceserver:
@@ -64,6 +69,10 @@ resilience4j:
 dmn:
   engine:
     provider: ${DMN_ENGINE_PROVIDER:drools}
+
+rule:
+  cache:
+    max-bytes-mb: ${RULE_CACHE_MAX_BYTES_MB:200}
 
 ai:
   provider:

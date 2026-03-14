@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- INVALID: XXE (XML External Entity) injection attempt — must be rejected by validator -->
+<!DOCTYPE definitions [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             id="invalid-xxe-attempt"
+             name="XXE Attempt"
+             namespace="http://example.com/xxe">
+
+  <description>&xxe;</description>
+
+  <decision id="xxeDecision" name="XXE Decision">
+    <decisionTable id="dt_xxe" hitPolicy="UNIQUE">
+      <output id="out_xxe" label="Result" name="result" typeRef="string"/>
+      <rule id="r_xxe">
+        <outputEntry id="oe_xxe">
+          <text>"injected"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+</definitions>

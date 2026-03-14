@@ -33,15 +33,28 @@ class SecurityConfig {
                     // Decision history queries — role: audit-reader
                     .requestMatchers(HttpMethod.GET, "/api/v1/decisions/history/**")
                         .hasAnyRole("AUDIT_READER", "SYSTEM_ADMIN")
+                    // Rule-set operations
+                    .requestMatchers(HttpMethod.GET, "/api/v1/rule-sets/**")
+                        .hasAnyRole("RULE_READER", "RULE_ADMIN", "SYSTEM_ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/rule-sets/**")
+                        .hasAnyRole("RULE_ADMIN", "SYSTEM_ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/rule-sets/**")
+                        .hasAnyRole("RULE_ADMIN", "SYSTEM_ADMIN")
                     // Rule read operations — role: rule-reader or higher
                     .requestMatchers(HttpMethod.GET, "/api/v1/rules/**")
                         .hasAnyRole("RULE_READER", "RULE_ADMIN", "SYSTEM_ADMIN")
+                    // DMN validate (POST but read-only semantics) — rule-reader or higher
+                    .requestMatchers(HttpMethod.POST, "/api/v1/rules/validate")
+                        .hasAnyRole("RULE_READER", "RULE_ADMIN", "SYSTEM_ADMIN")
+                    // Purge versions — SYSTEM_ADMIN only
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/rules/{id}/versions/{version}")
+                        .hasRole("SYSTEM_ADMIN")
                     // Rule write operations — role: rule-admin
-                    .requestMatchers(HttpMethod.POST, "/api/v1/rules/**")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/rules", "/api/v1/rules/**")
                         .hasAnyRole("RULE_ADMIN", "SYSTEM_ADMIN")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/rules/**")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/rules", "/api/v1/rules/**")
                         .hasAnyRole("RULE_ADMIN", "SYSTEM_ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, "/api/v1/rules/**")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/rules", "/api/v1/rules/**")
                         .hasAnyRole("RULE_ADMIN", "SYSTEM_ADMIN")
                     // AI config — role: system-admin
                     .requestMatchers("/api/v1/config/**")

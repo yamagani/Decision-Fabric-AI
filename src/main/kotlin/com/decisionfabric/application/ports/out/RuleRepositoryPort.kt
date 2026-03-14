@@ -1,37 +1,44 @@
 package com.decisionfabric.application.ports.out
 
-import java.util.UUID
+import com.decisionfabric.domain.rule.Rule
+import com.decisionfabric.domain.rule.RuleId
+import com.decisionfabric.domain.rule.RuleSet
+import com.decisionfabric.domain.rule.RuleSetId
 
 /**
- * Outbound port for rule persistence.
+ * Outbound port for rule and rule-set persistence.
  * Implemented by: PostgreSqlRuleRepositoryAdapter
  */
 interface RuleRepositoryPort {
-    fun save(rule: RuleData): RuleData
-    fun findById(id: UUID): RuleData?
-    fun findAll(page: Int, size: Int): PagedResult<RuleData>
-    fun findAllActive(): List<RuleData>
-    fun findByIdAndVersion(id: UUID, version: Int): RuleData?
-    fun deleteById(id: UUID)
-    fun existsById(id: UUID): Boolean
-}
+    // --- RuleSet ---
+    fun saveRuleSet(ruleSet: RuleSet): RuleSet
+    fun findRuleSetById(id: RuleSetId): RuleSet?
+    fun findRuleSetByIdForUpdate(id: RuleSetId): RuleSet?
+    fun findAllRuleSets(page: Int, size: Int, includeInactive: Boolean): PagedResult<RuleSet>
+    fun existsRuleSetByName(name: String): Boolean
+    fun countRulesInSet(ruleSetId: RuleSetId): Int
+    fun countActiveRulesInSet(ruleSetId: RuleSetId): Int
 
-data class RuleData(
-    val id: UUID,
-    val name: String,
-    val description: String?,
-    val dmnXml: String,
-    val version: Int,
-    val status: String,
-    val createdBy: String,
-    val createdAt: java.time.Instant,
-    val updatedAt: java.time.Instant
-)
+    // --- Rule ---
+    fun saveRule(rule: Rule): Rule
+    fun findRuleById(id: RuleId): Rule?
+    fun findRuleByIdForUpdate(id: RuleId): Rule?
+    fun findAllRules(
+        ruleSetId: RuleSetId?,
+        page: Int,
+        size: Int,
+        search: String?,
+        includeInactive: Boolean
+    ): PagedResult<Rule>
+    fun findAllActiveRules(): List<Rule>
+    fun existsRuleByNameInSet(ruleSetId: RuleSetId, name: String, excludeId: RuleId? = null): Boolean
+    fun deleteRuleVersion(ruleId: RuleId, version: Int)
+}
 
 data class PagedResult<T>(
     val content: List<T>,
-    val totalElements: Long,
-    val totalPages: Int,
     val page: Int,
-    val size: Int
+    val size: Int,
+    val totalElements: Long,
+    val totalPages: Int
 )

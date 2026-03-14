@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
+             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
+             id="valid-multi-hit-policy"
+             name="Valid Multi-Hit Policy Decision"
+             namespace="http://camunda.org/schema/1.0/dmn">
+
+  <decision id="riskAssessment" name="Risk Assessment">
+    <decisionTable id="decisionTable_risk" hitPolicy="COLLECT" aggregation="SUM">
+      <input id="input_age" label="Age">
+        <inputExpression id="inputExpr_age" typeRef="integer">
+          <text>age</text>
+        </inputExpression>
+      </input>
+      <input id="input_income" label="Annual Income">
+        <inputExpression id="inputExpr_income" typeRef="integer">
+          <text>annualIncome</text>
+        </inputExpression>
+      </input>
+      <output id="output_score" label="Risk Score" name="riskScore" typeRef="integer"/>
+      <rule id="rule_age_young">
+        <inputEntry id="ie_age_1">
+          <text>&lt; 25</text>
+        </inputEntry>
+        <inputEntry id="ie_income_1">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="oe_score_1">
+          <text>10</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_income_low">
+        <inputEntry id="ie_age_2">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="ie_income_2">
+          <text>&lt; 30000</text>
+        </inputEntry>
+        <outputEntry id="oe_score_2">
+          <text>20</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+</definitions>

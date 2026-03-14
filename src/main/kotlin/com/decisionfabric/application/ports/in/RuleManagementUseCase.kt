@@ -1,50 +1,54 @@
 package com.decisionfabric.application.ports.`in`
 
-import com.decisionfabric.application.ports.out.PagedResult
-import com.decisionfabric.application.ports.out.RuleData
-import java.util.UUID
+import com.decisionfabric.application.rule.command.ActivateVersionCommand
+import com.decisionfabric.application.rule.command.CreateRuleCommand
+import com.decisionfabric.application.rule.command.CreateRuleSetCommand
+import com.decisionfabric.application.rule.command.DeactivateVersionCommand
+import com.decisionfabric.application.rule.command.DeleteRuleCommand
+import com.decisionfabric.application.rule.command.DeleteRuleSetCommand
+import com.decisionfabric.application.rule.command.DiscardVersionCommand
+import com.decisionfabric.application.rule.command.ImportDmnCommand
+import com.decisionfabric.application.rule.command.PurgeVersionCommand
+import com.decisionfabric.application.rule.command.UpdateRuleCommand
+import com.decisionfabric.application.rule.command.ValidateDmnCommand
+import com.decisionfabric.application.rule.query.DmnImportResultView
+import com.decisionfabric.application.rule.query.DmnValidationResultView
+import com.decisionfabric.application.rule.query.PagedRuleSetView
+import com.decisionfabric.application.rule.query.PagedRuleView
+import com.decisionfabric.application.rule.query.RuleSetView
+import com.decisionfabric.application.rule.query.RuleVersionView
+import com.decisionfabric.application.rule.query.RuleView
+import com.decisionfabric.domain.rule.RuleId
+import com.decisionfabric.domain.rule.RuleSetId
 
 interface RuleManagementUseCase {
-    fun createRule(command: CreateRuleCommand): RuleData
-    fun updateRule(command: UpdateRuleCommand): RuleData
-    fun activateVersion(command: ActivateVersionCommand): RuleData
-    fun deactivateRule(id: UUID, userId: String): RuleData
-    fun importDmn(command: ImportDmnCommand): List<RuleData>
-    fun exportDmn(id: UUID): String
-    fun getRule(id: UUID): RuleData
-    fun listRules(page: Int, size: Int): PagedResult<RuleData>
-}
+    // Rule Set operations
+    fun createRuleSet(command: CreateRuleSetCommand): RuleSetView
+    fun getRuleSet(ruleSetId: RuleSetId): RuleSetView
+    fun listRuleSets(page: Int, size: Int, includeInactive: Boolean = false): PagedRuleSetView
+    fun deleteRuleSet(command: DeleteRuleSetCommand)
 
-data class CreateRuleCommand(
-    val name: String,
-    val description: String?,
-    val dmnXml: String,
-    val userId: String
-)
+    // Rule operations
+    fun createRule(command: CreateRuleCommand): RuleView
+    fun updateRule(command: UpdateRuleCommand): RuleView
+    fun getRule(ruleId: RuleId): RuleView
+    fun listRules(
+        ruleSetId: RuleSetId?,
+        page: Int,
+        size: Int,
+        search: String? = null,
+        includeInactive: Boolean = false
+    ): PagedRuleView
+    fun deleteRule(command: DeleteRuleCommand)
 
-data class UpdateRuleCommand(
-    val id: UUID,
-    val name: String?,
-    val description: String?,
-    val dmnXml: String?,
-    val userId: String
-)
+    // Version operations
+    fun activateVersion(command: ActivateVersionCommand): RuleVersionView
+    fun deactivateVersion(command: DeactivateVersionCommand): RuleVersionView
+    fun discardVersion(command: DiscardVersionCommand): RuleVersionView
+    fun purgeVersion(command: PurgeVersionCommand)
 
-data class ActivateVersionCommand(
-    val id: UUID,
-    val version: Int,
-    val userId: String
-)
-
-data class ImportDmnCommand(
-    val dmnXmlBytes: ByteArray,
-    val userId: String
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is ImportDmnCommand) return false
-        return dmnXmlBytes.contentEquals(other.dmnXmlBytes) && userId == other.userId
-    }
-
-    override fun hashCode(): Int = 31 * dmnXmlBytes.contentHashCode() + userId.hashCode()
+    // DMN import / export / validate
+    fun importDmn(command: ImportDmnCommand): DmnImportResultView
+    fun exportDmn(ruleId: RuleId, version: Int?): String
+    fun validateDmn(command: ValidateDmnCommand): DmnValidationResultView
 }

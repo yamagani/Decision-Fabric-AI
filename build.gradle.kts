@@ -43,7 +43,6 @@ dependencies {
     // Database
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core")
-    implementation("org.flywaydb:flyway-database-postgresql")
 
     // DMN Engine — Drools
     implementation("org.kie:kie-api:${property("droolsVersion")}")

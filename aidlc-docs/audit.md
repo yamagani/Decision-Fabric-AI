@@ -128,8 +128,77 @@
 
 ---
 
-## Construction Phase - Unit 1 Foundation - Code Generation Plan Approved
-**Timestamp**: 2026-03-13T02:15:00Z
+## Construction Phase - Unit 2: Rule Management - Functional Design Started
+**Timestamp**: 2026-03-14T00:00:00Z
+**User Input**: "Continue to Next Stage"
+**AI Response**: Unit 1 Foundation approved. Starting Unit 2: Rule Management — Functional Design. Created unit-2-rule-management-functional-design-plan.md with 7 clarification questions covering: rule name uniqueness, versioning model, active version constraint, rule sets, DMN import granularity, immutability of activated versions, and deactivation/deletion behaviour.
+**Context**: CONSTRUCTION PHASE - Unit 2: Rule Management - Functional Design initiated. Awaiting user answers.
+
+---
+
+## Construction Phase - Unit 2: Rule Management - Functional Design Answers Received
+**Timestamp**: 2026-03-14T01:00:00Z
+**User Input**: "answered all"
+**AI Response**: All 7 answers received and analysed — no ambiguities detected. Design decisions: Q1=B (name unique per rule set), Q2=C (branch model), Q3=B (multiple active versions / A/B rollout), Q4=B (rule set required container), Q5=B (whole file = one rule), Q6=A (immutable once activated), Q7=A (soft delete only). Generated three functional design artifacts: business-logic-model.md, domain-entities.md, business-rules.md. All plan checkboxes marked complete.
+**Context**: CONSTRUCTION PHASE - Unit 2: Rule Management - Functional Design complete. Awaiting user approval.
+
+---
+
+## Construction Phase - Unit 2: Rule Management - Functional Design Approved
+**Timestamp**: 2026-03-14T02:00:00Z
+**User Input**: "Continue to Next Stage"
+**AI Response**: Functional Design approved. Advancing to NFR Requirements stage for Unit 2: Rule Management. Creating NFR requirements plan with Unit 2-specific questions.
+**Context**: CONSTRUCTION PHASE - Unit 2: Rule Management - NFR Requirements initiated.
+
+---
+
+## Construction Phase - Unit 2: Rule Management - NFR Requirements Answers Received
+**Timestamp**: 2026-03-14T03:00:00Z
+**User Input**: "answered all"
+**AI Response**: All 5 NFR answers received — no ambiguities. Decisions: Q1=A (eventual consistency / no read lock), Q2=C (pessimistic lock SELECT FOR UPDATE), Q3=C (manual purge API only), Q4=C (configurable max-bytes 200MB default, oldest-first eviction), Q5=A+B (composite index on status+rule_set_id AND pg_trgm trigram on name). Generated nfr-requirements.md (7 sections, 17 requirements) and tech-stack-decisions.md (16 tech decisions). All plan checkboxes marked complete.
+**Context**: CONSTRUCTION PHASE - Unit 2: Rule Management - NFR Requirements complete. Awaiting user approval.
+
+---
+
+## Construction Phase - Unit 2: Rule Management - NFR Requirements Approved
+**Timestamp**: 2026-03-14T04:00:00Z
+**User Input**: "Continue to Next Stage"
+**AI Response**: NFR Requirements approved. Advancing to NFR Design for Unit 2: Rule Management. All design decisions fully specified in NFR Requirements — no additional questions needed. Generating NFR design artifacts directly.
+**Context**: CONSTRUCTION PHASE - Unit 2: Rule Management - NFR Design initiated.
+
+---
+
+## Construction Phase - Unit 2: Rule Management - NFR Design Complete
+**Timestamp**: 2026-03-14T05:00:00Z
+**User Input**: N/A (no questions required)
+**AI Response**: NFR Design artifacts generated: nfr-design-patterns.md (8 patterns: pessimistic lock, lock-free cache update, byte-cap eviction, XXE-safe pipeline, AFTER_COMMIT listener, repository mapper, structured observability, guarded purge) and logical-components.md (9 components with full dependency graph, interaction sequences, Flyway V2 schema plan). All plan checkboxes marked complete.
+**Context**: CONSTRUCTION PHASE - Unit 2: Rule Management - NFR Design complete. Awaiting user approval.
+
+---
+
+## Construction Phase - Unit 2: Rule Management - NFR Design Approved
+**Timestamp**: 2026-03-14T06:00:00Z
+**User Input**: "Continue to Next Stage"
+**AI Response**: NFR Design approved. Advancing to Code Generation for Unit 2: Rule Management. Creating detailed code generation plan.
+**Context**: CONSTRUCTION PHASE - Unit 2: Rule Management - Code Generation (Part 1: Planning) initiated.
+
+---
+
+## Construction Phase - Unit 2: Rule Management - Code Generation Plan Created
+**Timestamp**: 2026-03-14T07:00:00Z
+**User Input**: N/A
+**AI Response**: Created unit-2-rule-management-code-generation-plan.md with 48 steps. Awaiting user approval to proceed with generation.
+**Context**: CONSTRUCTION PHASE - Unit 2: Rule Management - Code Generation Plan awaiting approval.
+
+---
+
+## Construction Phase - Unit 2: Rule Management - Code Generation Plan Approved
+**Timestamp**: 2026-03-14T08:00:00Z
+**User Input**: "pprove & Generate"
+**AI Response**: Plan approved. Starting Unit 2 code generation — executing all 48 steps.
+**Context**: CONSTRUCTION PHASE - Unit 2: Rule Management - Code Generation (Part 2: Generation) in progress.
+
+---
 **User Input**: "Approve & Continue"
 **AI Response**: Code generation plan approved. Generated all Unit 1 Foundation files: build.gradle.kts, settings.gradle.kts, gradle wrapper, DecisionFabricAiApplication.kt, application.yml, application-local.yml, 5 domain base types, 6 outbound port interfaces, 4 use-case interfaces, SecurityConfig.kt (JWT OIDC + RBAC), JwtProperties.kt, CorrelationIdFilter.kt, GlobalExceptionHandler.kt, ErrorResponse.kt, V1__baseline.sql, logback-spring.xml, ObservabilityConfig.kt, 4 unit tests, application-test.yml, openapi/security-scheme.yml, unit-1-code-summary.md. All plan checkboxes marked complete.
 **Context**: CONSTRUCTION PHASE - Unit 1: Foundation complete. Moving to Unit 2: Rule Management.

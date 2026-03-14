@@ -1,0 +1,49 @@
+{
+  "realm": "decision-fabric-ai",
+  "enabled": true,
+  "sslRequired": "none",
+  "clients": [
+    {
+      "clientId": "decision-fabric-ai-client",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "local-secret",
+      "standardFlowEnabled": false,
+      "serviceAccountsEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "protocol": "openid-connect"
+    }
+  ],
+  "roles": {
+    "realm": [
+      { "name": "DECISION_CONSUMER" },
+      { "name": "RULE_READER" },
+      { "name": "RULE_ADMIN" },
+      { "name": "AUDIT_READER" },
+      { "name": "SYSTEM_ADMIN" }
+    ]
+  },
+  "users": [
+    {
+      "username": "rule-admin",
+      "enabled": true,
+      "email": "rule-admin@local.dev",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["RULE_ADMIN", "RULE_READER"]
+    },
+    {
+      "username": "system-admin",
+      "enabled": true,
+      "email": "system-admin@local.dev",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["SYSTEM_ADMIN", "RULE_ADMIN", "RULE_READER", "AUDIT_READER", "DECISION_CONSUMER"]
+    },
+    {
+      "username": "consumer",
+      "enabled": true,
+      "email": "consumer@local.dev",
+      "credentials": [{ "type": "password", "value": "password", "temporary": false }],
+      "realmRoles": ["DECISION_CONSUMER"]
+    }
+  ]
+}

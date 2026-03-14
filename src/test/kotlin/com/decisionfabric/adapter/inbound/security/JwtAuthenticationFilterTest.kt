@@ -1,5 +1,6 @@
 package com.decisionfabric.adapter.inbound.security
 
+import com.decisionfabric.application.ports.`in`.RuleManagementUseCase
 import com.ninjasquad.springmockk.MockkBean
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,6 +16,9 @@ class JwtAuthenticationFilterTest {
 
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @MockkBean
+    private lateinit var ruleManagementUseCase: RuleManagementUseCase
 
     @Test
     fun `actuator health is accessible without authentication`() {

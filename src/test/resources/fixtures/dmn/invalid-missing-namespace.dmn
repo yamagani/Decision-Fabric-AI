@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- INVALID: missing required 'namespace' attribute on <definitions> -->
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
+             id="invalid-missing-namespace"
+             name="Invalid Missing Namespace">
+
+  <decision id="someDecision" name="Some Decision">
+    <decisionTable id="dt_1" hitPolicy="UNIQUE">
+      <output id="out_1" label="Result" name="result" typeRef="string"/>
+      <rule id="r_1">
+        <outputEntry id="oe_1">
+          <text>"default"</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+
+</definitions>
