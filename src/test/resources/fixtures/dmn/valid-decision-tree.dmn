@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:feel="https://www.omg.org/spec/DMN/20230324/FEEL/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="insurance-premium-decision-tree" name="Insurance Premium Decision Tree" namespace="http://decisionfabric.com/insurance-premium">
+  <decision id="driverRiskLevel" name="Driver Risk Level">
+    <decisionTable id="dt_driver_risk" hitPolicy="FIRST">
+      <input id="in_driver_age" label="Driver Age">
+        <inputExpression id="expr_driver_age" typeRef="integer">
+          <text>driverAge</text>
+        </inputExpression>
+      </input>
+      <input id="in_accident_count" label="Accident Count (Last 3 Years)">
+        <inputExpression id="expr_accident_count" typeRef="integer">
+          <text>accidentCount</text>
+        </inputExpression>
+      </input>
+      <output id="out_driver_risk" label="Driver Risk Level" name="driverRiskLevel" typeRef="string" />
+      <rule id="rule_young_with_accident">
+        <description>Young driver (under 25) with at least one accident is high risk</description>
+        <inputEntry id="ie_ya_age">
+          <text>&lt; 25</text>
+        </inputEntry>
+        <inputEntry id="ie_ya_acc">
+          <text>&gt;= 1</text>
+        </inputEntry>
+        <outputEntry id="oe_ya">
+          <text>&quot;high&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_young_clean">
+        <description>Young driver with clean record is medium risk</description>
+        <inputEntry id="ie_yc_age">
+          <text>&lt; 25</text>
+        </inputEntry>
+        <inputEntry id="ie_yc_acc">
+          <text>0</text>
+        </inputEntry>
+        <outputEntry id="oe_yc">
+          <text>&quot;medium&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_senior_accidents">
+        <description>Senior driver (65+) with 2 or more accidents is high risk</description>
+        <inputEntry id="ie_sa_age">
+          <text>&gt;= 65</text>
+        </inputEntry>
+        <inputEntry id="ie_sa_acc">
+          <text>&gt;= 2</text>
+        </inputEntry>
+        <outputEntry id="oe_sa">
+          <text>&quot;high&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_senior_moderate">
+        <description>Senior driver with 0-1 accidents is medium risk</description>
+        <inputEntry id="ie_sm_age">
+          <text>&gt;= 65</text>
+        </inputEntry>
+        <inputEntry id="ie_sm_acc">
+          <text>[0..1]</text>
+        </inputEntry>
+        <outputEntry id="oe_sm">
+          <text>&quot;medium&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_adult_many_accidents">
+        <description>Adult driver with 3 or more accidents is high risk</description>
+        <inputEntry id="ie_ama_age">
+          <text>[25..64]</text>
+        </inputEntry>
+        <inputEntry id="ie_ama_acc">
+          <text>&gt;= 3</text>
+        </inputEntry>
+        <outputEntry id="oe_ama">
+          <text>&quot;high&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_adult_some_accidents">
+        <description>Adult driver with 1-2 accidents is medium risk</description>
+        <inputEntry id="ie_asa_age">
+          <text>[25..64]</text>
+        </inputEntry>
+        <inputEntry id="ie_asa_acc">
+          <text>[1..2]</text>
+        </inputEntry>
+        <outputEntry id="oe_asa">
+          <text>&quot;medium&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_adult_clean">
+        <description>Adult driver with no accidents is low risk</description>
+        <inputEntry id="ie_ac_age">
+          <text>[25..64]</text>
+        </inputEntry>
+        <inputEntry id="ie_ac_acc">
+          <text>0</text>
+        </inputEntry>
+        <outputEntry id="oe_ac">
+          <text>&quot;low&quot;</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <decision id="vehicleSurcharge" name="Vehicle Surcharge">
+    <decisionTable id="dt_vehicle_surcharge" hitPolicy="FIRST">
+      <input id="in_vehicle_type" label="Vehicle Type">
+        <inputExpression id="expr_vehicle_type" typeRef="string">
+          <text>vehicleType</text>
+        </inputExpression>
+        <inputValues id="iv_vehicle_type">
+          <text>&quot;sedan&quot;,&quot;suv&quot;,&quot;sports&quot;,&quot;truck&quot;,&quot;electric&quot;</text>
+        </inputValues>
+      </input>
+      <input id="in_vehicle_value" label="Vehicle Value (USD)">
+        <inputExpression id="expr_vehicle_value" typeRef="integer">
+          <text>vehicleValue</text>
+        </inputExpression>
+      </input>
+      <output id="out_surcharge" label="Surcharge (USD)" name="vehicleSurcharge" typeRef="number" />
+      <rule id="rule_sports">
+        <description>Sports cars carry a fixed surcharge due to performance risk</description>
+        <inputEntry id="ie_sp_type">
+          <text>&quot;sports&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_sp_val">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="oe_sp">
+          <text>200</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_high_value">
+        <description>High-value vehicles over $80k receive premium surcharge</description>
+        <inputEntry id="ie_hv_type">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="ie_hv_val">
+          <text>&gt; 80000</text>
+        </inputEntry>
+        <outputEntry id="oe_hv">
+          <text>150</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_electric">
+        <description>Electric vehicles receive a surcharge discount</description>
+        <inputEntry id="ie_ev_type">
+          <text>&quot;electric&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_ev_val">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="oe_ev">
+          <text>-50</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_large_vehicle">
+        <description>SUVs and trucks carry a moderate surcharge</description>
+        <inputEntry id="ie_lv_type">
+          <text>&quot;suv&quot;,&quot;truck&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_lv_val">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="oe_lv">
+          <text>75</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_standard">
+        <description>Standard sedan — no surcharge applied</description>
+        <inputEntry id="ie_std_type">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="ie_std_val">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="oe_std">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <decision id="insurancePremium" name="Insurance Premium">
+    <informationRequirement id="ir_driver_risk">
+      <requiredDecision href="#driverRiskLevel" />
+    </informationRequirement>
+    <informationRequirement id="ir_vehicle_surcharge">
+      <requiredDecision href="#vehicleSurcharge" />
+    </informationRequirement>
+    <decisionTable id="dt_premium" hitPolicy="FIRST">
+      <input id="in_risk_level" label="Driver Risk Level">
+        <inputExpression id="expr_risk_level" typeRef="string">
+          <text>driverRiskLevel</text>
+        </inputExpression>
+        <inputValues id="iv_risk_level">
+          <text>&quot;low&quot;,&quot;medium&quot;,&quot;high&quot;</text>
+        </inputValues>
+      </input>
+      <input id="in_surcharge" label="Vehicle Surcharge (USD)">
+        <inputExpression id="expr_surcharge" typeRef="number">
+          <text>vehicleSurcharge</text>
+        </inputExpression>
+      </input>
+      <output id="out_annual_premium" label="Annual Premium (USD)" name="annualPremium" typeRef="number" />
+      <output id="out_premium_tier" label="Premium Tier" name="premiumTier" typeRef="string" />
+      <rule id="rule_high_risk_premium_vehicle">
+        <description>High-risk driver with high-surcharge vehicle — premium tier</description>
+        <inputEntry id="ie_hr_pv_risk">
+          <text>&quot;high&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_hr_pv_sur">
+          <text>&gt;= 150</text>
+        </inputEntry>
+        <outputEntry id="oe_hr_pv_prem">
+          <text>2000</text>
+        </outputEntry>
+        <outputEntry id="oe_hr_pv_tier">
+          <text>&quot;premium&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_high_risk">
+        <description>High-risk driver — elevated tier regardless of vehicle</description>
+        <inputEntry id="ie_hr_risk">
+          <text>&quot;high&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_hr_sur">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="oe_hr_prem">
+          <text>1400</text>
+        </outputEntry>
+        <outputEntry id="oe_hr_tier">
+          <text>&quot;elevated&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_medium_risk_premium_vehicle">
+        <description>Medium-risk driver with high-surcharge vehicle — elevated tier</description>
+        <inputEntry id="ie_mr_pv_risk">
+          <text>&quot;medium&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_mr_pv_sur">
+          <text>&gt;= 150</text>
+        </inputEntry>
+        <outputEntry id="oe_mr_pv_prem">
+          <text>1100</text>
+        </outputEntry>
+        <outputEntry id="oe_mr_pv_tier">
+          <text>&quot;elevated&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_medium_risk_electric">
+        <description>Medium-risk driver with electric vehicle — standard tier with discount</description>
+        <inputEntry id="ie_mr_ev_risk">
+          <text>&quot;medium&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_mr_ev_sur">
+          <text>&lt; 0</text>
+        </inputEntry>
+        <outputEntry id="oe_mr_ev_prem">
+          <text>600</text>
+        </outputEntry>
+        <outputEntry id="oe_mr_ev_tier">
+          <text>&quot;standard&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_medium_risk">
+        <description>Medium-risk driver with standard vehicle — standard tier</description>
+        <inputEntry id="ie_mr_risk">
+          <text>&quot;medium&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_mr_sur">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="oe_mr_prem">
+          <text>800</text>
+        </outputEntry>
+        <outputEntry id="oe_mr_tier">
+          <text>&quot;standard&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_low_risk_electric">
+        <description>Low-risk driver with electric vehicle — preferred tier</description>
+        <inputEntry id="ie_lr_ev_risk">
+          <text>&quot;low&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_lr_ev_sur">
+          <text>&lt; 0</text>
+        </inputEntry>
+        <outputEntry id="oe_lr_ev_prem">
+          <text>350</text>
+        </outputEntry>
+        <outputEntry id="oe_lr_ev_tier">
+          <text>&quot;preferred&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_low_risk">
+        <description>Low-risk driver — preferred tier</description>
+        <inputEntry id="ie_lr_risk">
+          <text>&quot;low&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_lr_sur">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="oe_lr_prem">
+          <text>500</text>
+        </outputEntry>
+        <outputEntry id="oe_lr_tier">
+          <text>&quot;preferred&quot;</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_C36D6217-60C5-47DD-9276-83BFFF13FAF6" name="" useAlternativeInputDataShape="false">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths />
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

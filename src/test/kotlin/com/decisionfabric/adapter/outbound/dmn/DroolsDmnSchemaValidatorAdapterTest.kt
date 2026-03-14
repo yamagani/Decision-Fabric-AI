@@ -2,6 +2,7 @@ package com.decisionfabric.adapter.outbound.dmn
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class DroolsDmnSchemaValidatorAdapterTest {
@@ -76,5 +77,140 @@ class DroolsDmnSchemaValidatorAdapterTest {
     fun `validate rejects malformed XML`() {
         val result = adapter.validate("<definitions><unclosed>")
         assertThat(result.isValid).isFalse()
+    }
+
+    // ── Decision Table fixture ────────────────────────────────────────────────
+
+    @Nested
+    inner class DecisionTableFixture {
+
+        private fun loadFixture(name: String): String =
+            javaClass.getResourceAsStream("/fixtures/dmn/$name")
+                ?.bufferedReader()?.readText()
+                ?: error("Fixture not found: $name")
+
+        @Test
+        fun `comprehensive decision table fixture is well-formed XML`() {
+            val dmn = loadFixture("valid-decision-table-comprehensive.dmn")
+            val result = adapter.validate(dmn)
+            // XML must be well-formed and pass the size + XXE guards
+            assertThat(result).isNotNull()
+            assertThat(result.errors).noneMatch {
+                it.contains("DOCTYPE", ignoreCase = true) ||
+                    it.contains("1 MB", ignoreCase = true) ||
+                    it.contains("well-formed", ignoreCase = true)
+            }
+        }
+
+        @Test
+        fun `comprehensive decision table fixture uses FIRST hit policy`() {
+            val dmn = loadFixture("valid-decision-table-comprehensive.dmn")
+            assertThat(dmn).contains("hitPolicy=\"FIRST\"")
+        }
+
+        @Test
+        fun `comprehensive decision table fixture declares three inputs`() {
+            val dmn = loadFixture("valid-decision-table-comprehensive.dmn")
+            assertThat(dmn)
+                .contains("<text>employmentType</text>")
+                .contains("<text>yearsOfService</text>")
+                .contains("<text>performanceRating</text>")
+        }
+
+        @Test
+        fun `comprehensive decision table fixture declares three outputs`() {
+            val dmn = loadFixture("valid-decision-table-comprehensive.dmn")
+            assertThat(dmn)
+                .contains("name=\"bonusPercentage\"")
+                .contains("name=\"leaveEntitlement\"")
+                .contains("name=\"healthCoverageLevel\"")
+        }
+
+        @Test
+        fun `comprehensive decision table fixture contains eight rules`() {
+            val dmn = loadFixture("valid-decision-table-comprehensive.dmn")
+            val ruleCount = "<rule id=".toRegex().findAll(dmn).count()
+            assertThat(ruleCount).isEqualTo(8)
+        }
+
+        @Test
+        fun `comprehensive decision table fixture has correct namespace`() {
+            val dmn = loadFixture("valid-decision-table-comprehensive.dmn")
+            assertThat(dmn).contains("namespace=\"http://decisionfabric.com/employee-benefits\"")
+        }
+    }
+
+    // ── Decision Tree (DRG) fixture ───────────────────────────────────────────
+
+    @Nested
+    inner class DecisionTreeFixture {
+
+        private fun loadFixture(name: String): String =
+            javaClass.getResourceAsStream("/fixtures/dmn/$name")
+                ?.bufferedReader()?.readText()
+                ?: error("Fixture not found: $name")
+
+        @Test
+        fun `decision tree fixture is well-formed XML`() {
+            val dmn = loadFixture("valid-decision-tree.dmn")
+            val result = adapter.validate(dmn)
+            assertThat(result).isNotNull()
+            assertThat(result.errors).noneMatch {
+                it.contains("DOCTYPE", ignoreCase = true) ||
+                    it.contains("1 MB", ignoreCase = true) ||
+                    it.contains("well-formed", ignoreCase = true)
+            }
+        }
+
+        @Test
+        fun `decision tree fixture contains three linked decisions`() {
+            val dmn = loadFixture("valid-decision-tree.dmn")
+            val decisionCount = "<decision id=".toRegex().findAll(dmn).count()
+            assertThat(decisionCount).isEqualTo(3)
+        }
+
+        @Test
+        fun `decision tree root decision references both sub-decisions via informationRequirement`() {
+            val dmn = loadFixture("valid-decision-tree.dmn")
+            // Drools may serialise self-closing elements with a space before />
+            assertThat(dmn)
+                .contains("href=\"#driverRiskLevel\"")
+                .contains("href=\"#vehicleSurcharge\"")
+        }
+
+        @Test
+        fun `decision tree branch decisions cover all driver risk levels`() {
+            val dmn = loadFixture("valid-decision-tree.dmn")
+            // Drools XML-encodes FEEL string literals as &quot;; use description text as a stable assertion.
+            assertThat(dmn)
+                .contains("low risk")
+                .contains("medium risk")
+                .contains("high risk")
+        }
+
+        @Test
+        fun `decision tree vehicle surcharge branch covers electric vehicle discount`() {
+            val dmn = loadFixture("valid-decision-tree.dmn")
+            // Electric vehicle rule outputs a negative surcharge (discount)
+            assertThat(dmn).contains("<text>-50</text>")
+        }
+
+        @Test
+        fun `decision tree root decision produces premium tier outputs`() {
+            val dmn = loadFixture("valid-decision-tree.dmn")
+            // Output names are stable; tier values use description text to avoid &quot; encoding dependence.
+            assertThat(dmn)
+                .contains("name=\"annualPremium\"")
+                .contains("name=\"premiumTier\"")
+                .contains("preferred tier")
+                .contains("elevated tier")
+                .contains("premium tier")
+        }
+
+        @Test
+        fun `decision tree fixture has correct namespace`() {
+            val dmn = loadFixture("valid-decision-tree.dmn")
+            assertThat(dmn).contains("namespace=\"http://decisionfabric.com/insurance-premium\"")
+        }
     }
 }

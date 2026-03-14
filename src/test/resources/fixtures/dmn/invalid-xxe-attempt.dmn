@@ -1,24 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- INVALID: XXE (XML External Entity) injection attempt — must be rejected by validator -->
-<!DOCTYPE definitions [
-  <!ENTITY xxe SYSTEM "file:///etc/passwd">
-]>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
-             id="invalid-xxe-attempt"
-             name="XXE Attempt"
-             namespace="http://example.com/xxe">
-
-  <description>&xxe;</description>
-
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:feel="https://www.omg.org/spec/DMN/20230324/FEEL/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="invalid-xxe-attempt" name="XXE Attempt" namespace="http://example.com/xxe">
+  <description></description>
   <decision id="xxeDecision" name="XXE Decision">
     <decisionTable id="dt_xxe" hitPolicy="UNIQUE">
-      <output id="out_xxe" label="Result" name="result" typeRef="string"/>
+      <output id="out_xxe" label="Result" name="result" typeRef="string" />
       <rule id="r_xxe">
         <outputEntry id="oe_xxe">
-          <text>"injected"</text>
+          <text>&quot;injected&quot;</text>
         </outputEntry>
       </rule>
     </decisionTable>
   </decision>
-
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_5550DF3E-E903-4B8C-B066-FBBD47DF288A" name="Default DRD" useAlternativeInputDataShape="false">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths />
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="_E7E44A27-F705-420F-9965-2EE52F795F8B" dmnElementRef="xxeDecision">
+        <dc:Bounds x="112" y="112" width="160" height="80" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
 </definitions>

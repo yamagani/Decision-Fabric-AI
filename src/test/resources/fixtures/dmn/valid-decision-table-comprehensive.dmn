@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:feel="https://www.omg.org/spec/DMN/20230324/FEEL/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="employee-benefits-eligibility" name="Employee Benefits Eligibility" namespace="http://decisionfabric.com/employee-benefits">
+  <decision id="benefitsEligibility" name="Benefits Eligibility">
+    <decisionTable id="dt_benefits" hitPolicy="FIRST">
+      <input id="in_employment_type" label="Employment Type">
+        <inputExpression id="expr_employment_type" typeRef="string">
+          <text>employmentType</text>
+        </inputExpression>
+        <inputValues id="iv_employment_type">
+          <text>&quot;full-time&quot;,&quot;part-time&quot;,&quot;contractor&quot;</text>
+        </inputValues>
+      </input>
+      <input id="in_years_service" label="Years of Service">
+        <inputExpression id="expr_years_service" typeRef="integer">
+          <text>yearsOfService</text>
+        </inputExpression>
+      </input>
+      <input id="in_perf_rating" label="Performance Rating">
+        <inputExpression id="expr_perf_rating" typeRef="string">
+          <text>performanceRating</text>
+        </inputExpression>
+        <inputValues id="iv_perf_rating">
+          <text>&quot;exceeds&quot;,&quot;meets&quot;,&quot;below&quot;</text>
+        </inputValues>
+      </input>
+      <output id="out_bonus_pct" label="Bonus Percentage" name="bonusPercentage" typeRef="number" />
+      <output id="out_leave_days" label="Leave Entitlement" name="leaveEntitlement" typeRef="integer" />
+      <output id="out_health_coverage" label="Health Coverage Level" name="healthCoverageLevel" typeRef="string" />
+      <rule id="rule_contractor">
+        <description>Contractors are not entitled to bonus or company health cover</description>
+        <inputEntry id="ie_ct_type">
+          <text>&quot;contractor&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_ct_years">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="ie_ct_perf">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="oe_ct_bonus">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="oe_ct_leave">
+          <text>10</text>
+        </outputEntry>
+        <outputEntry id="oe_ct_health">
+          <text>&quot;none&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_below_rating">
+        <description>Employees rated below expectations receive no bonus</description>
+        <inputEntry id="ie_bl_type">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="ie_bl_years">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="ie_bl_perf">
+          <text>&quot;below&quot;</text>
+        </inputEntry>
+        <outputEntry id="oe_bl_bonus">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="oe_bl_leave">
+          <text>15</text>
+        </outputEntry>
+        <outputEntry id="oe_bl_health">
+          <text>&quot;basic&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_ft_senior_exceeds">
+        <description>Senior full-time with exceeds rating — top benefits tier</description>
+        <inputEntry id="ie_ft3_type">
+          <text>&quot;full-time&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_ft3_years">
+          <text>&gt;= 10</text>
+        </inputEntry>
+        <inputEntry id="ie_ft3_perf">
+          <text>&quot;exceeds&quot;</text>
+        </inputEntry>
+        <outputEntry id="oe_ft3_bonus">
+          <text>20</text>
+        </outputEntry>
+        <outputEntry id="oe_ft3_leave">
+          <text>30</text>
+        </outputEntry>
+        <outputEntry id="oe_ft3_health">
+          <text>&quot;full&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_ft_mid_exceeds">
+        <description>Mid-tenure full-time with exceeds rating — elevated benefits tier</description>
+        <inputEntry id="ie_ft4_type">
+          <text>&quot;full-time&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_ft4_years">
+          <text>[5..9]</text>
+        </inputEntry>
+        <inputEntry id="ie_ft4_perf">
+          <text>&quot;exceeds&quot;</text>
+        </inputEntry>
+        <outputEntry id="oe_ft4_bonus">
+          <text>15</text>
+        </outputEntry>
+        <outputEntry id="oe_ft4_leave">
+          <text>25</text>
+        </outputEntry>
+        <outputEntry id="oe_ft4_health">
+          <text>&quot;full&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_ft_meets">
+        <description>Full-time employee meeting expectations — standard benefits</description>
+        <inputEntry id="ie_ft5_type">
+          <text>&quot;full-time&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_ft5_years">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="ie_ft5_perf">
+          <text>&quot;meets&quot;</text>
+        </inputEntry>
+        <outputEntry id="oe_ft5_bonus">
+          <text>10</text>
+        </outputEntry>
+        <outputEntry id="oe_ft5_leave">
+          <text>20</text>
+        </outputEntry>
+        <outputEntry id="oe_ft5_health">
+          <text>&quot;full&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_ft_junior_exceeds">
+        <description>Junior full-time with exceeds rating — standard tier with bonus</description>
+        <inputEntry id="ie_ft6_type">
+          <text>&quot;full-time&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_ft6_years">
+          <text>&lt; 5</text>
+        </inputEntry>
+        <inputEntry id="ie_ft6_perf">
+          <text>&quot;exceeds&quot;</text>
+        </inputEntry>
+        <outputEntry id="oe_ft6_bonus">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="oe_ft6_leave">
+          <text>20</text>
+        </outputEntry>
+        <outputEntry id="oe_ft6_health">
+          <text>&quot;full&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_pt_exceeds">
+        <description>Part-time with exceeds rating — partial bonus and basic cover</description>
+        <inputEntry id="ie_pt7_type">
+          <text>&quot;part-time&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_pt7_years">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="ie_pt7_perf">
+          <text>&quot;exceeds&quot;</text>
+        </inputEntry>
+        <outputEntry id="oe_pt7_bonus">
+          <text>5</text>
+        </outputEntry>
+        <outputEntry id="oe_pt7_leave">
+          <text>15</text>
+        </outputEntry>
+        <outputEntry id="oe_pt7_health">
+          <text>&quot;basic&quot;</text>
+        </outputEntry>
+      </rule>
+      <rule id="rule_pt_meets">
+        <description>Part-time meeting expectations — minimal benefits</description>
+        <inputEntry id="ie_pt8_type">
+          <text>&quot;part-time&quot;</text>
+        </inputEntry>
+        <inputEntry id="ie_pt8_years">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="ie_pt8_perf">
+          <text>&quot;meets&quot;</text>
+        </inputEntry>
+        <outputEntry id="oe_pt8_bonus">
+          <text>0</text>
+        </outputEntry>
+        <outputEntry id="oe_pt8_leave">
+          <text>12</text>
+        </outputEntry>
+        <outputEntry id="oe_pt8_health">
+          <text>&quot;basic&quot;</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_2ABE724F-8C42-4168-88FB-50B0F7A370C4" name="Default DRD" useAlternativeInputDataShape="false">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths dmnElementRef="dt_benefits">
+            <kie:width>100</kie:width>
+            <kie:width>165</kie:width>
+            <kie:width>132</kie:width>
+            <kie:width>161</kie:width>
+            <kie:width>141</kie:width>
+            <kie:width>141</kie:width>
+          </kie:ComponentWidths>
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="_17742CB2-53D6-4C3B-9B11-2921944709D0" dmnElementRef="benefitsEligibility">
+        <dc:Bounds x="112" y="112" width="160" height="80" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

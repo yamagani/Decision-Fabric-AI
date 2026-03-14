@@ -1,11 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
-             xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/"
-             xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/"
-             id="valid-multi-hit-policy"
-             name="Valid Multi-Hit Policy Decision"
-             namespace="http://camunda.org/schema/1.0/dmn">
-
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:feel="https://www.omg.org/spec/DMN/20230324/FEEL/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="valid-multi-hit-policy" name="Valid Multi-Hit Policy Decision" namespace="http://camunda.org/schema/1.0/dmn">
   <decision id="riskAssessment" name="Risk Assessment">
     <decisionTable id="decisionTable_risk" hitPolicy="COLLECT" aggregation="SUM">
       <input id="input_age" label="Age">
@@ -18,7 +12,7 @@
           <text>annualIncome</text>
         </inputExpression>
       </input>
-      <output id="output_score" label="Risk Score" name="riskScore" typeRef="integer"/>
+      <output id="output_score" label="Risk Score" name="riskScore" typeRef="integer" />
       <rule id="rule_age_young">
         <inputEntry id="ie_age_1">
           <text>&lt; 25</text>
@@ -43,5 +37,16 @@
       </rule>
     </decisionTable>
   </decision>
-
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_A2B7B637-1988-4BCB-8140-F4FD055DAF89" name="Default DRD" useAlternativeInputDataShape="false">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths />
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="_C19C1A67-377B-4ECB-8365-4D6640A3EFCE" dmnElementRef="riskAssessment">
+        <dc:Bounds x="112" y="112" width="160" height="80" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
 </definitions>

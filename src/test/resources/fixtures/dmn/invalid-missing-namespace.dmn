@@ -1,18 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- INVALID: missing required 'namespace' attribute on <definitions> -->
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/"
-             id="invalid-missing-namespace"
-             name="Invalid Missing Namespace">
-
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:feel="https://www.omg.org/spec/DMN/20230324/FEEL/" xmlns:kie="https://kie.org/dmn/extensions/1.0" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="invalid-missing-namespace" name="Invalid Missing Namespace">
   <decision id="someDecision" name="Some Decision">
     <decisionTable id="dt_1" hitPolicy="UNIQUE">
-      <output id="out_1" label="Result" name="result" typeRef="string"/>
+      <output id="out_1" label="Result" name="result" typeRef="string" />
       <rule id="r_1">
         <outputEntry id="oe_1">
-          <text>"default"</text>
+          <text>&quot;default&quot;</text>
         </outputEntry>
       </rule>
     </decisionTable>
   </decision>
-
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_2590919A-5211-422D-8F42-32311E957A88" name="Default DRD" useAlternativeInputDataShape="false">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths />
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="_EE452C33-9263-485A-8CB9-1853C59B6B69" dmnElementRef="someDecision">
+        <dc:Bounds x="200" y="160" width="160" height="80" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
 </definitions>
