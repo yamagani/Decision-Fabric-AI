@@ -1,6 +1,4 @@
 package com.decisionfabric.adapter.inbound.rest.rule.dto
-
-import com.fasterxml.jackson.annotation.JsonInclude
 import java.time.Instant
 import java.util.UUID
 
@@ -88,6 +86,5 @@ data class DmnImportResponse(
 
 data class DmnValidationResponse(
     val valid: Boolean,
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     val errors: List<String> = emptyList()
 )

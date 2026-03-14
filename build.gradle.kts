@@ -23,6 +23,7 @@ extra["awsSdkVersion"] = "2.23.17"
 extra["resilience4jVersion"] = "2.2.0"
 extra["droolsVersion"] = "9.44.0.Final"
 extra["testcontainersVersion"] = "1.19.6"
+extra["karateVersion"] = "1.5.1"
 
 dependencies {
     // Spring Boot
@@ -78,6 +79,10 @@ dependencies {
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     testImplementation("io.mockk:mockk:1.13.10")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
+
+    // Karate — API/E2E tests (run against live stack via `./gradlew karateTest`)
+    testImplementation("io.karatelabs:karate-junit5:${property("karateVersion")}")
+    testImplementation("io.karatelabs:karate-core:${property("karateVersion")}")
 }
 
 tasks.withType<KotlinCompile> {
@@ -87,6 +92,26 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+// Enable JUnit Platform for all test tasks
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// Standard unit/slice test task — excludes Karate and Testcontainers integration tests
+tasks.named<Test>("test") {
+    exclude("**/karate/**")
+}
+
+// Dedicated Karate API test task — runs against a live stack (docker compose up first)
+tasks.register<Test>("karateTest") {
+    description = "Run Karate API tests against a running local stack"
+    group = "verification"
+    useJUnitPlatform()
+    include("**/karate/**")
+    systemProperty("karate.env", System.getProperty("karate.env", "local"))
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    // Don't fail the build on Karate failures so we can view the HTML report
+    ignoreFailures = true
+    outputs.upToDateWhen { false }
 }

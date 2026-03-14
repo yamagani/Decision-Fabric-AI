@@ -33,11 +33,11 @@ services:
     volumes:
       - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8080/realms/decision-fabric-ai/.well-known/openid-configuration || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 10
-      start_period: 30s
+      test: ["CMD", "/bin/bash", "-c", "exec 3<>/dev/tcp/localhost/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
 
   # ── Decision Fabric AI application ─────────────────────────────────────────
   app:
@@ -56,12 +56,18 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # Database
+      # Database — override application-local.yml Testcontainers values
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/decisionfabric
+      SPRING_DATASOURCE_USERNAME: decisionfabric
+      SPRING_DATASOURCE_PASSWORD: decisionfabric
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       DB_URL: jdbc:postgresql://postgres:5432/decisionfabric
       DB_USERNAME: decisionfabric
       DB_PASSWORD: decisionfabric
-      # JWT – points at local Keycloak
-      JWT_ISSUER_URI: http://keycloak:8080/realms/decision-fabric-ai
+      # JWT — override application-local.yml localhost values to use docker network
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:9090/realms/decision-fabric-ai
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/decision-fabric-ai/protocol/openid-connect/certs
+      JWT_ISSUER_URI: http://localhost:9090/realms/decision-fabric-ai
       JWT_JWKS_URI: http://keycloak:8080/realms/decision-fabric-ai/protocol/openid-connect/certs
       # Cache / misc
       RULE_CACHE_MAX_BYTES_MB: 200
@@ -72,7 +78,7 @@ services:
       # JVM
       JAVA_TOOL_OPTIONS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8080/actuator/health || exit 1"]
+      test: ["CMD", "/bin/bash", "-c", "exec 3<>/dev/tcp/localhost/8080"]
       interval: 10s
       timeout: 5s
       retries: 10

@@ -20,13 +20,13 @@ interface RuleJpaRepository : JpaRepository<RuleJpaEntity, UUID> {
         SELECT r FROM RuleJpaEntity r
         WHERE (:ruleSetId IS NULL OR r.ruleSetId = :ruleSetId)
           AND (:includeInactive = true OR r.status = 'ACTIVE')
-          AND (:search IS NULL OR lower(r.name) LIKE lower(concat('%', :search, '%')))
+          AND (:searchPattern IS NULL OR lower(r.name) LIKE :searchPattern)
         ORDER BY r.createdAt DESC
     """)
     fun search(
         @Param("ruleSetId") ruleSetId: UUID?,
         @Param("includeInactive") includeInactive: Boolean,
-        @Param("search") search: String?,
+        @Param("searchPattern") searchPattern: String?,
         pageable: Pageable
     ): Page<RuleJpaEntity>
 

@@ -105,7 +105,7 @@ class PostgreSqlRuleRepositoryAdapter(
         val result = ruleJpaRepository.search(
             ruleSetId = ruleSetId?.value,
             includeInactive = includeInactive,
-            search = search?.takeIf { it.isNotBlank() },
+            searchPattern = search?.takeIf { it.isNotBlank() }?.let { "%${it.lowercase()}%" },
             pageable = pageable
         )
         return PagedResult(

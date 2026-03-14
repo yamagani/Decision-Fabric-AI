@@ -12,6 +12,7 @@ import org.slf4j.MDC
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -25,7 +26,7 @@ class GlobalExceptionHandler {
     fun handleNotFound(ex: EntityNotFoundException, request: HttpServletRequest): ResponseEntity<ErrorResponse> =
         error(HttpStatus.NOT_FOUND, ex.message ?: "Not found", request)
 
-    @ExceptionHandler(ValidationException::class, MethodArgumentNotValidException::class)
+    @ExceptionHandler(ValidationException::class, MethodArgumentNotValidException::class, IllegalArgumentException::class)
     fun handleValidation(ex: Exception, request: HttpServletRequest): ResponseEntity<ErrorResponse> {
         val message = when (ex) {
             is MethodArgumentNotValidException -> ex.bindingResult.fieldErrors
@@ -52,6 +53,10 @@ class GlobalExceptionHandler {
         log.warn("AI provider unavailable: ${ex.message}")
         return error(HttpStatus.SERVICE_UNAVAILABLE, "AI augmentation is temporarily unavailable", request)
     }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException::class)
+    fun handleUnsupportedMediaType(ex: HttpMediaTypeNotSupportedException, request: HttpServletRequest): ResponseEntity<ErrorResponse> =
+        error(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Unsupported Content-Type: ${ex.contentType}", request)
 
     @ExceptionHandler(AccessDeniedException::class)
     fun handleAccessDenied(ex: AccessDeniedException, request: HttpServletRequest): ResponseEntity<ErrorResponse> =

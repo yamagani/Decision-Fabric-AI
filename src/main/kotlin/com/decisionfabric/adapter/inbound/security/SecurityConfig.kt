@@ -8,8 +8,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
@@ -74,12 +74,14 @@ class SecurityConfig {
 
     @Bean
     fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
-        val grantedAuthoritiesConverter = JwtGrantedAuthoritiesConverter().apply {
-            setAuthoritiesClaimName("roles")
-            setAuthorityPrefix("ROLE_")
-        }
         return JwtAuthenticationConverter().apply {
-            setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter)
+            setJwtGrantedAuthoritiesConverter { jwt ->
+                // Keycloak encodes realm roles in realm_access.roles
+                @Suppress("UNCHECKED_CAST")
+                val realmRoles = (jwt.claims["realm_access"] as? Map<String, Any>)
+                    ?.get("roles") as? Collection<String> ?: emptyList()
+                realmRoles.map { SimpleGrantedAuthority("ROLE_$it") }
+            }
         }
     }
 }

@@ -1,0 +1,27 @@
+# Exclude build outputs so Docker always compiles from source
+build/
+.gradle/
+out/
+
+# IDE files
+.idea/
+*.iml
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+docker/
+
+# Docs
+aidlc-docs/
+*.md
