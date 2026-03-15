@@ -25,6 +25,14 @@ class SecurityConfig(private val jwtProperties: JwtProperties) {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests { auth ->
                 auth
+                    // Swagger UI / OpenAPI docs — open for API exploration
+                    .requestMatchers(
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/v3/api-docs",
+                        "/v3/api-docs/**",
+                        "/v3/api-docs.yaml"
+                    ).permitAll()
                     // Actuator health — open to monitoring agents
                     .requestMatchers("/actuator/health").permitAll()
                     // Decision evaluation — role: decision-consumer or higher

@@ -67,6 +67,9 @@ dependencies {
     implementation("software.amazon.awssdk:ssm")
     implementation("software.amazon.awssdk:secretsmanager")
 
+    // Swagger UI (Springdoc)
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0")
+
     // Configuration processor
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
