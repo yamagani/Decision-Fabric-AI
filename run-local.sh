@@ -20,6 +20,10 @@ Usage: $(basename "$0") [OPTIONS]
 Options:
   --skip-tests       Skip Gradle test phase
   --build-only       Build & test but do NOT start docker-compose
+  --keycloak         Also start local Keycloak (docker-compose.dev.yml overlay)
+                     Use when you have no organisation SSO to point the app at.
+                     Omit this flag in production-like setups — set JWT_ISSUER_URI,
+                     JWT_JWKS_URI and JWT_ROLES_CLAIM env vars instead.
   --down             Tear down running docker-compose stack and exit
   --logs             Tail logs of the running stack (no build)
   -h, --help         Show this help
@@ -34,11 +38,13 @@ SKIP_TESTS=false
 BUILD_ONLY=false
 DO_DOWN=false
 DO_LOGS=false
+USE_KEYCLOAK=false
 
 for arg in "$@"; do
   case "$arg" in
     --skip-tests)  SKIP_TESTS=true ;;
     --build-only)  BUILD_ONLY=true ;;
+    --keycloak)    USE_KEYCLOAK=true ;;
     --down)        DO_DOWN=true ;;
     --logs)        DO_LOGS=true ;;
     -h|--help)     usage ;;
@@ -46,18 +52,26 @@ for arg in "$@"; do
   esac
 done
 
+# Build the compose file list: base always included; dev overlay only with --keycloak
+COMPOSE_FILES="-f $ROOT/docker-compose.yml"
+if $USE_KEYCLOAK; then
+  COMPOSE_FILES="$COMPOSE_FILES -f $ROOT/docker-compose.dev.yml"
+fi
+
 ##############################################################################
 # Shortcuts: --down / --logs
 ##############################################################################
 if $DO_DOWN; then
   info "Tearing down docker-compose stack…"
-  docker compose -f "$ROOT/docker-compose.yml" down -v
+  # shellcheck disable=SC2086
+  docker compose $COMPOSE_FILES down -v
   success "Stack stopped and volumes removed."
   exit 0
 fi
 
 if $DO_LOGS; then
-  docker compose -f "$ROOT/docker-compose.yml" logs -f app
+  # shellcheck disable=SC2086
+  docker compose $COMPOSE_FILES logs -f app
   exit 0
 fi
 
@@ -115,19 +129,28 @@ success "Docker image built."
 ##############################################################################
 # Docker Compose up
 ##############################################################################
-info "Starting stack (postgres + keycloak + app)…"
-docker compose -f "$ROOT/docker-compose.yml" up -d --remove-orphans
+if $USE_KEYCLOAK; then
+  info "Starting stack (postgres + keycloak + app)…"
+else
+  info "Starting stack (postgres + app)…"
+  info "No --keycloak flag: set JWT_ISSUER_URI, JWT_JWKS_URI and JWT_ROLES_CLAIM"
+  info "env vars (or a .env file) to point the app at your organisation's SSO."
+fi
+# shellcheck disable=SC2086
+docker compose $COMPOSE_FILES up -d --remove-orphans
 
 info "Waiting for app to become healthy…"
 max_wait=120
 elapsed=0
-until docker compose -f "$ROOT/docker-compose.yml" ps app \
+# shellcheck disable=SC2086
+until docker compose $COMPOSE_FILES ps app \
       | grep -qE "healthy|(running)"; do
   sleep 3
   elapsed=$((elapsed + 3))
   if [[ $elapsed -ge $max_wait ]]; then
     warn "App did not become healthy within ${max_wait}s — showing recent logs:"
-    docker compose -f "$ROOT/docker-compose.yml" logs --tail 40 app
+    # shellcheck disable=SC2086
+    docker compose $COMPOSE_FILES logs --tail 40 app
     exit 1
   fi
 done
@@ -136,14 +159,22 @@ success "Stack is up!"
 echo ""
 echo "  App:       http://localhost:8080"
 echo "  Health:    http://localhost:8080/actuator/health"
-echo "  Keycloak:  http://localhost:9090  (admin / admin)"
-echo "  Postgres:  localhost:5432  (decisionfabric / decisionfabric)"
-echo ""
-echo "  Get a token:  curl -s -X POST \\"
-echo "    http://localhost:9090/realms/decision-fabric-ai/protocol/openid-connect/token \\"
-echo "    -d 'client_id=decision-fabric-ai-client&client_secret=local-secret' \\"
-echo "    -d 'grant_type=password&username=rule-admin&password=password' \\"
-echo "    | jq -r .access_token"
+if $USE_KEYCLOAK; then
+  echo "  Keycloak:  http://localhost:9090  (admin / admin)"
+  echo "  Postgres:  localhost:5432  (decisionfabric / decisionfabric)"
+  echo ""
+  echo "  Get a token:"
+  echo "    TOKEN=\$(curl -s -X POST \\"
+  echo "      http://localhost:9090/realms/decision-fabric-ai/protocol/openid-connect/token \\"
+  echo "      -d 'client_id=decision-fabric-ai-client&client_secret=local-secret' \\"
+  echo "      -d 'grant_type=password&username=rule-admin&password=password' \\"
+  echo "      | jq -r .access_token)"
+else
+  echo "  Postgres:  localhost:5432  (decisionfabric / decisionfabric)"
+  echo ""
+  echo "  Obtain a token from your SSO provider and pass it as:"
+  echo "    -H 'Authorization: Bearer <token>'"
+fi
 echo ""
 echo "  Tail logs: ./run-local.sh --logs"
 echo "  Stop:      ./run-local.sh --down"

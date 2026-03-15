@@ -19,27 +19,12 @@ services:
       timeout: 5s
       retries: 10
 
-  # ── Keycloak (local OIDC / JWT issuer) ─────────────────────────────────────
-  keycloak:
-    image: quay.io/keycloak/keycloak:24.0
-    container_name: decisionfabric-keycloak
-    restart: unless-stopped
-    command: start-dev --import-realm
-    environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-    ports:
-      - "9090:8080"
-    volumes:
-      - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
-    healthcheck:
-      test: ["CMD", "/bin/bash", "-c", "exec 3<>/dev/tcp/localhost/8080"]
-      interval: 10s
-      timeout: 5s
-      retries: 15
-      start_period: 20s
-
   # ── Decision Fabric AI application ─────────────────────────────────────────
+  # JWT / SSO configuration:
+  #   Set JWT_ISSUER_URI and JWT_JWKS_URI to your organisation's OIDC provider.
+  #   Set JWT_ROLES_CLAIM to the dot-path of the roles list in your JWT
+  #   (default "roles" works for Okta, Azure AD, Auth0;
+  #    use "realm_access.roles" for Keycloak — see docker-compose.dev.yml).
   app:
     build:
       context: .
@@ -51,12 +36,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      keycloak:
-        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
-      # Database — override application-local.yml Testcontainers values
+      # Database
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/decisionfabric
       SPRING_DATASOURCE_USERNAME: decisionfabric
       SPRING_DATASOURCE_PASSWORD: decisionfabric
@@ -64,11 +47,14 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/decisionfabric
       DB_USERNAME: decisionfabric
       DB_PASSWORD: decisionfabric
-      # JWT — override application-local.yml localhost values to use docker network
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://localhost:9090/realms/decision-fabric-ai
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/decision-fabric-ai/protocol/openid-connect/certs
-      JWT_ISSUER_URI: http://localhost:9090/realms/decision-fabric-ai
-      JWT_JWKS_URI: http://keycloak:8080/realms/decision-fabric-ai/protocol/openid-connect/certs
+      # ── SSO / JWT ── replace these three with your provider's values ─────────
+      JWT_ISSUER_URI: ${JWT_ISSUER_URI:https://auth.example.com}
+      JWT_JWKS_URI: ${JWT_JWKS_URI:https://auth.example.com/.well-known/jwks.json}
+      # Dot-path to the roles list inside your JWT.
+      # "roles"                flat claim  — Okta, Azure AD, Auth0  (default)
+      # "realm_access.roles"   nested      — add docker-compose.dev.yml for Keycloak
+      JWT_ROLES_CLAIM: ${JWT_ROLES_CLAIM:roles}
+      # ────────────────────────────────────────────────────────────────────────
       # Cache / misc
       RULE_CACHE_MAX_BYTES_MB: 200
       CLOUDWATCH_ENABLED: "false"

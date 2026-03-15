@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableWebSecurity
 @EnableMethodSecurity
 @EnableConfigurationProperties(JwtProperties::class)
-class SecurityConfig {
+class SecurityConfig(private val jwtProperties: JwtProperties) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -76,12 +76,28 @@ class SecurityConfig {
     fun jwtAuthenticationConverter(): JwtAuthenticationConverter {
         return JwtAuthenticationConverter().apply {
             setJwtGrantedAuthoritiesConverter { jwt ->
-                // Keycloak encodes realm roles in realm_access.roles
-                @Suppress("UNCHECKED_CAST")
-                val realmRoles = (jwt.claims["realm_access"] as? Map<String, Any>)
-                    ?.get("roles") as? Collection<String> ?: emptyList()
-                realmRoles.map { SimpleGrantedAuthority("ROLE_$it") }
+                extractRoles(jwt.claims, jwtProperties.rolesClaimPath)
+                    .map { SimpleGrantedAuthority("ROLE_$it") }
             }
         }
+    }
+
+    /**
+     * Resolves a dot-separated [claimPath] against the JWT [claims] map and
+     * returns the resulting list of role strings, or an empty list if the path
+     * does not exist or does not resolve to a collection.
+     *
+     * Single-segment paths (e.g. "roles")  → looks up claims["roles"]
+     * Multi-segment paths (e.g. "realm_access.roles") → follows each segment
+     * in turn, expecting intermediate nodes to be Map<String, Any>.
+     */
+    private fun extractRoles(claims: Map<String, Any>, claimPath: String): Collection<String> {
+        val segments = claimPath.split(".")
+        var node: Any? = claims
+        for (segment in segments) {
+            node = (node as? Map<*, *>)?.get(segment) ?: return emptyList()
+        }
+        @Suppress("UNCHECKED_CAST")
+        return node as? Collection<String> ?: emptyList()
     }
 }

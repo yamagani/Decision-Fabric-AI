@@ -37,6 +37,11 @@ spring:
         jwt:
           issuer-uri: ${JWT_ISSUER_URI:https://auth.example.com}
           jwk-set-uri: ${JWT_JWKS_URI:https://auth.example.com/.well-known/jwks.json}
+          # Dot-separated path to the roles list inside the JWT.
+          # Flat claim (Okta, Azure AD, Auth0):  roles
+          # Nested claim (Keycloak):             realm_access.roles
+          # Custom provider:                     <set JWT_ROLES_CLAIM to your claim path>
+          roles-claim-path: ${JWT_ROLES_CLAIM:roles}
 
 management:
   endpoints:

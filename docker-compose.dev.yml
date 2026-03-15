@@ -1,0 +1,53 @@
+# docker-compose.dev.yml — Keycloak overlay for local contributor development
+#
+# Adds a local Keycloak instance as a stand-in OIDC provider.
+# Use this ONLY if you don't have an organisation SSO to point at.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+#
+# Or with run-local.sh:
+#   ./run-local.sh --keycloak
+#
+# Access:
+#   Keycloak admin UI  : http://localhost:9090  (admin / admin)
+#   App token endpoint : http://localhost:9090/realms/decision-fabric-ai/protocol/openid-connect/token
+#
+# Pre-configured test users (password: "password" for all):
+#   rule-admin    — RULE_ADMIN role
+#   system-admin  — SYSTEM_ADMIN role
+#   consumer      — DECISION_CONSUMER role
+
+services:
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: decisionfabric-keycloak
+    restart: unless-stopped
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./docker/keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "exec 3<>/dev/tcp/localhost/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+
+  # Override the app service to:
+  #   1. Wait for Keycloak to be healthy before starting
+  #   2. Point JWT validation at the local Keycloak instance
+  #   3. Use realm_access.roles (Keycloak-specific nested claim path)
+  app:
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    environment:
+      JWT_ISSUER_URI: http://localhost:9090/realms/decision-fabric-ai
+      JWT_JWKS_URI: http://keycloak:8080/realms/decision-fabric-ai/protocol/openid-connect/certs
+      JWT_ROLES_CLAIM: realm_access.roles
