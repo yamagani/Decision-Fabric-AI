@@ -8,8 +8,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:9090
-          jwk-set-uri: http://localhost:9090/.well-known/jwks.json
+          # Use env vars so docker-compose.dev.yml can override these;
+          # defaults here are correct for running the app directly on your dev machine
+          # with `./run-local.sh --keycloak` or a manually started Keycloak on port 9090.
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:9090/realms/decision-fabric-ai}
+          jwk-set-uri: ${JWT_JWKS_URI:http://localhost:9090/realms/decision-fabric-ai/protocol/openid-connect/certs}
 
 management:
   metrics:

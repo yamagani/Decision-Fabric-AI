@@ -48,12 +48,12 @@ services:
       DB_USERNAME: decisionfabric
       DB_PASSWORD: decisionfabric
       # ── SSO / JWT ── replace these three with your provider's values ─────────
-      JWT_ISSUER_URI: ${JWT_ISSUER_URI:https://auth.example.com}
-      JWT_JWKS_URI: ${JWT_JWKS_URI:https://auth.example.com/.well-known/jwks.json}
+      JWT_ISSUER_URI: ${JWT_ISSUER_URI:-https://auth.example.com}
+      JWT_JWKS_URI: ${JWT_JWKS_URI:-https://auth.example.com/.well-known/jwks.json}
       # Dot-path to the roles list inside your JWT.
       # "roles"                flat claim  — Okta, Azure AD, Auth0  (default)
       # "realm_access.roles"   nested      — add docker-compose.dev.yml for Keycloak
-      JWT_ROLES_CLAIM: ${JWT_ROLES_CLAIM:roles}
+      JWT_ROLES_CLAIM: ${JWT_ROLES_CLAIM:-roles}
       # ────────────────────────────────────────────────────────────────────────
       # Cache / misc
       RULE_CACHE_MAX_BYTES_MB: 200
