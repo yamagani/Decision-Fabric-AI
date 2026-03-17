@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="https://kie.org/dmn/_E949D573-29E1-4E1F-B1DB-6315F648072D" id="_A788CC8D-3231-4874-990F-18ED30297735" name="DMN_04D4D1D1-954E-4EAC-A6E7-00EE7D2C68F0" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0">
+  <itemDefinition id="_210DFF0A-6275-4AEB-8B42-BC479E1B5E43" name="Rate" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
+  <itemDefinition id="_1FF4832A-CAD5-4007-B855-8ED3C4B573EF" name="Decision" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
+  <itemDefinition id="_86558622-17A4-4FDE-A06F-6AF66BE5C422" name="Loan Amount" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
+  <itemDefinition id="_A25DCEFE-18F5-45E3-A942-F764B69E0F29" name="Employment Years" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
+  <itemDefinition id="_293A30EF-B4C1-4804-9341-EF07D9241ECC" name="Credit Score" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
+  <itemDefinition id="_7A4B4680-38CC-4343-8D57-721BD2D78D77" name="Annual Income" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
+  <decision name="Decision" id="_52955DF7-7C78-47B4-9ACF-C76ACD3AA4D1">
+    <variable name="Decision" id="_A8D6DDA9-93FC-4874-8D55-DD06F174C802" typeRef="boolean" />
+    <decisionTable id="_FD353944-8BD8-4D63-B410-7E81077BA06A" typeRef="boolean" hitPolicy="UNIQUE" label="Decision">
+      <input id="_D0927BA0-D1D0-421B-9A8E-5A75A644DA17">
+        <inputExpression id="_EDB4EA5F-87AA-4BF7-B559-71F88601D862" typeRef="Credit Score">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="_FDE3969D-AB2F-437C-A176-32EB045E6F9C">
+        <inputExpression id="_3D7388FE-6323-4769-A077-5CC237B3570D" typeRef="Annual Income">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="_C603B3B5-7BD9-4D99-8E00-BB51B09899A8">
+        <inputExpression id="_47A8214F-4E7B-48CE-BFCC-8A8BE3461FA3" typeRef="Employment Years">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="_50876C3C-EFC8-4D4C-94FC-57C6DAFDEFBF">
+        <inputExpression id="_1ECA178B-4519-4E7A-88EE-6AECF47042AB" typeRef="Loan Amount">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="_07C80C9F-6AE0-4D2D-837E-E68621EA2AD3" />
+      <annotation name="Rate" />
+      <rule id="_0A5B43E0-6ADF-4D2C-A742-B24644ABAF90">
+        <inputEntry id="_B52CBDFB-4450-451A-9CE0-74DE2560593D">
+          <text>≥ 780</text>
+        </inputEntry>
+        <inputEntry id="_36BA57BD-E8EE-4A8F-A7BC-1F8D61E311CD">
+          <text>≥ 100K</text>
+        </inputEntry>
+        <inputEntry id="_2EE89900-0449-44B6-8A01-737892F0148A">
+          <text>≥ 5</text>
+        </inputEntry>
+        <inputEntry id="_B7F6511B-A7D3-49C0-9183-5C7F6B08D2EE">
+          <text>≤ 500K</text>
+        </inputEntry>
+        <outputEntry id="_69E3936F-2547-4C83-A87A-55B40C222BF6">
+          <text>true</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_0320252D-6815-419F-B850-3399CE15391A">
+        <inputEntry id="_F5FDD04D-CBF0-4DB3-BBE0-65567FC5D469">
+          <text>≥ 780</text>
+        </inputEntry>
+        <inputEntry id="_87ABD537-B2D4-4AEE-B535-33BD3BDE8EA3">
+          <text>≥ 100K</text>
+        </inputEntry>
+        <inputEntry id="_F7636876-84F6-4AA9-8690-815919909A3F">
+          <text>2–5</text>
+        </inputEntry>
+        <inputEntry id="_EF45AA4E-3A09-4143-A68B-4AD92753775E">
+          <text>≤ 500K</text>
+        </inputEntry>
+        <outputEntry id="_D432C5D7-2E90-4122-B43B-19351F7D04BF">
+          <text>true</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_4618D817-9413-4782-A3B7-1AD6E49115EB">
+        <inputEntry id="_635F7567-BFFA-4F55-9622-DF5BF231F7AC">
+          <text>≥ 780</text>
+        </inputEntry>
+        <inputEntry id="_D22D6316-ECED-478B-A481-087A4E6C7F7D">
+          <text>60–100K</text>
+        </inputEntry>
+        <inputEntry id="_B1916A41-7B18-4B82-8309-31AD3462EB6D">
+          <text>≥ 3</text>
+        </inputEntry>
+        <inputEntry id="_11363E32-A47D-4813-A4EF-F63D75D63EEB">
+          <text>≤ 300K</text>
+        </inputEntry>
+        <outputEntry id="_E7B16AA5-9E76-4AB2-BA41-8F19BC663182">
+          <text>true</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_299333EC-5AC2-4D2E-B2B2-257D07A8FD47">
+        <inputEntry id="_869E093E-755A-4CFC-9F65-93429CBE2014">
+          <text>700–780</text>
+        </inputEntry>
+        <inputEntry id="_7A31CD1B-A587-4CD6-BF78-ED79EFD2089C">
+          <text>≥ 80K</text>
+        </inputEntry>
+        <inputEntry id="_AB5C9112-33B8-49EE-AA68-F9D73B521C5D">
+          <text>≥ 5</text>
+        </inputEntry>
+        <inputEntry id="_1F070912-A5BD-4D99-9DF6-86CC35F61FAA">
+          <text>≤ 400K</text>
+        </inputEntry>
+        <outputEntry id="_C640F005-4BB9-4316-8C2C-D8C07E3DE829">
+          <text>true</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_BCC8C317-9882-4A26-9537-4A4E4F8CF158">
+        <inputEntry id="_7E69E162-6C91-4855-B569-2C245729F121">
+          <text>700–780</text>
+        </inputEntry>
+        <inputEntry id="_2AF18154-1541-4B0B-BAB2-59FB5F2DC65D">
+          <text>≥ 80K</text>
+        </inputEntry>
+        <inputEntry id="_0852AA35-5601-4B23-BAD4-F8819D520556">
+          <text>2–5</text>
+        </inputEntry>
+        <inputEntry id="_01C305D9-5046-4AE8-9F94-4236EEB7BDB5">
+          <text>≤ 300K</text>
+        </inputEntry>
+        <outputEntry id="_E2665BE3-0B53-4D49-A9E5-9B12D5463B62">
+          <text>true</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_D0811766-7683-49AE-9238-14BCC0317BD8">
+        <inputEntry id="_345AF454-DF48-4576-A5F1-A1F8CB3E834F">
+          <text>700–780</text>
+        </inputEntry>
+        <inputEntry id="_578F53D2-3116-4DD7-8F3B-565FDF9404CB">
+          <text>50–80K</text>
+        </inputEntry>
+        <inputEntry id="_BDCAF76E-4DFF-48B6-BF1A-4228D078F924">
+          <text>≥ 3</text>
+        </inputEntry>
+        <inputEntry id="_F63D0FDB-17EC-4639-98BA-BB28E2B15330">
+          <text>≤ 250K</text>
+        </inputEntry>
+        <outputEntry id="_F1F09E01-6F1C-4160-AC78-747F20EC5628">
+          <text>true</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_3D6E86CD-5C72-4E83-B071-C5A2EADFECB3">
+        <inputEntry id="_D22DE282-A795-4020-814E-34443452540A">
+          <text>650–700</text>
+        </inputEntry>
+        <inputEntry id="_2E307171-C26D-441B-B06C-6165F3B3F6AA">
+          <text>≥ 70K</text>
+        </inputEntry>
+        <inputEntry id="_0D6006A6-A36B-4A0D-A1C7-407D6845FE49">
+          <text>≥ 5</text>
+        </inputEntry>
+        <inputEntry id="_D08BD4CC-56A0-4A28-A014-C1A0172CE5C9">
+          <text>≤ 200K</text>
+        </inputEntry>
+        <outputEntry id="_B03B485C-777A-40DC-B580-55142917ECC1">
+          <text>true</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_2CE763A5-0C6B-4A4D-9C12-58BC4D1DA2E6">
+        <inputEntry id="_FC66FAA3-320A-4DA8-97AE-62E89409A70E">
+          <text>650–700</text>
+        </inputEntry>
+        <inputEntry id="_7CB7183E-BDE9-4F41-B8AF-0A7A60484C0E">
+          <text>50–70K</text>
+        </inputEntry>
+        <inputEntry id="_EEDDEBE3-E737-4414-80AE-2D8BDBCFB8A6">
+          <text>≥ 3</text>
+        </inputEntry>
+        <inputEntry id="_F5664EE0-9440-4C31-B125-C8CC41530EAA">
+          <text>≤ 150K</text>
+        </inputEntry>
+        <outputEntry id="_31F765F5-D96D-40CA-A1BD-53D96D054FE4">
+          <text>true</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_5C4C7471-108B-4053-89D3-F2002E2D1443">
+        <inputEntry id="_21E15C8A-DC3A-4FA3-8E46-8A532F7E8D3F">
+          <text>650–700</text>
+        </inputEntry>
+        <inputEntry id="_EC8AA81A-8F2D-4DBA-BF37-33D6E36E8640">
+          <text>&lt; 50K</text>
+        </inputEntry>
+        <inputEntry id="_7A303336-D8DE-4327-AE3D-11F3918ACB9B">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_077EE573-CCEF-4B95-B105-5A473A8DA722">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_3DEBA6D2-5432-49EC-B49A-F11A6187D89E">
+          <text>false</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_7BA8F799-8609-4FFC-84FA-D4A5DFD04A67">
+        <inputEntry id="_9EB46368-6B84-436C-885A-AD313F840A88">
+          <text>&lt; 650</text>
+        </inputEntry>
+        <inputEntry id="_88A33C1F-F9C8-4DA6-AC6D-3E2951371DCE">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_63890F06-1FD4-42D9-BE6A-E503AE544C23">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_D4683C0F-7BCC-48E4-AEEC-EB6176A27A54">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_BCB13787-4FD5-47F4-B398-F097640BDC4D">
+          <text>false</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="_2AA4A811-BBFA-4B40-925F-BF854DBCA3FA" name="Default DRD" useAlternativeInputDataShape="false">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths dmnElementRef="_FD353944-8BD8-4D63-B410-7E81077BA06A">
+            <kie:width>60</kie:width>
+            <kie:width>118</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>118</kie:width>
+            <kie:width>240</kie:width>
+          </kie:ComponentWidths>
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="_BB47CCFA-730B-444D-8B94-2B6392BB6C87" dmnElementRef="_52955DF7-7C78-47B4-9ACF-C76ACD3AA4D1" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="100" y="100" width="160" height="80" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
