@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="https://kie.org/dmn/_E949D573-29E1-4E1F-B1DB-6315F648072D" id="_A788CC8D-3231-4874-990F-18ED30297735" name="DMN_04D4D1D1-954E-4EAC-A6E7-00EE7D2C68F0" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0">
-  <itemDefinition id="_210DFF0A-6275-4AEB-8B42-BC479E1B5E43" name="Rate" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
-  <itemDefinition id="_1FF4832A-CAD5-4007-B855-8ED3C4B573EF" name="Decision" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
-  <itemDefinition id="_86558622-17A4-4FDE-A06F-6AF66BE5C422" name="Loan Amount" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
-  <itemDefinition id="_A25DCEFE-18F5-45E3-A942-F764B69E0F29" name="Employment Years" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
-  <itemDefinition id="_293A30EF-B4C1-4804-9341-EF07D9241ECC" name="Credit Score" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
-  <itemDefinition id="_7A4B4680-38CC-4343-8D57-721BD2D78D77" name="Annual Income" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" />
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="https://kie.org/dmn/extensions/1.0" expressionLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/" namespace="https://kie.org/dmn/_E949D573-29E1-4E1F-B1DB-6315F648072D" id="_A788CC8D-3231-4874-990F-18ED30297735" name="DMN_04D4D1D1-954E-4EAC-A6E7-00EE7D2C68F0">
+  <itemDefinition id="_210DFF0A-6275-4AEB-8B42-BC479E1B5E43" name="Rate" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+    <typeRef>number</typeRef>
+  </itemDefinition>
+  <itemDefinition id="_1FF4832A-CAD5-4007-B855-8ED3C4B573EF" name="Decision" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+    <typeRef>boolean</typeRef>
+  </itemDefinition>
+  <itemDefinition id="_86558622-17A4-4FDE-A06F-6AF66BE5C422" name="Loan Amount" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+    <typeRef>number</typeRef>
+  </itemDefinition>
+  <itemDefinition id="_A25DCEFE-18F5-45E3-A942-F764B69E0F29" name="Employment Years" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+    <typeRef>number</typeRef>
+  </itemDefinition>
+  <itemDefinition id="_293A30EF-B4C1-4804-9341-EF07D9241ECC" name="Credit Score" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+    <typeRef>number</typeRef>
+  </itemDefinition>
+  <itemDefinition id="_7A4B4680-38CC-4343-8D57-721BD2D78D77" name="Annual Income" isCollection="false" typeLanguage="https://www.omg.org/spec/DMN/20230324/FEEL/">
+    <typeRef>number</typeRef>
+  </itemDefinition>
   <decision name="Decision" id="_52955DF7-7C78-47B4-9ACF-C76ACD3AA4D1">
     <variable name="Decision" id="_A8D6DDA9-93FC-4874-8D55-DD06F174C802" typeRef="boolean" />
+    <informationRequirement id="_8C4F46F8-547D-46D7-93B2-1AC7C6E91E7B">
+      <requiredInput href="#_D2912835-A317-4263-B2EA-E7649982DFB9" />
+    </informationRequirement>
     <decisionTable id="_FD353944-8BD8-4D63-B410-7E81077BA06A" typeRef="boolean" hitPolicy="UNIQUE" label="Decision">
       <input id="_D0927BA0-D1D0-421B-9A8E-5A75A644DA17">
         <inputExpression id="_EDB4EA5F-87AA-4BF7-B559-71F88601D862" typeRef="Credit Score">
@@ -48,7 +63,7 @@
           <text>true</text>
         </outputEntry>
         <annotationEntry>
-          <text></text>
+          <text>3.25%</text>
         </annotationEntry>
       </rule>
       <rule id="_0320252D-6815-419F-B850-3399CE15391A">
@@ -68,7 +83,7 @@
           <text>true</text>
         </outputEntry>
         <annotationEntry>
-          <text></text>
+          <text>3.75%</text>
         </annotationEntry>
       </rule>
       <rule id="_4618D817-9413-4782-A3B7-1AD6E49115EB">
@@ -88,7 +103,7 @@
           <text>true</text>
         </outputEntry>
         <annotationEntry>
-          <text></text>
+          <text>4.00%</text>
         </annotationEntry>
       </rule>
       <rule id="_299333EC-5AC2-4D2E-B2B2-257D07A8FD47">
@@ -108,7 +123,7 @@
           <text>true</text>
         </outputEntry>
         <annotationEntry>
-          <text></text>
+          <text>4.50%</text>
         </annotationEntry>
       </rule>
       <rule id="_BCC8C317-9882-4A26-9537-4A4E4F8CF158">
@@ -128,7 +143,7 @@
           <text>true</text>
         </outputEntry>
         <annotationEntry>
-          <text></text>
+          <text>5.25%</text>
         </annotationEntry>
       </rule>
       <rule id="_D0811766-7683-49AE-9238-14BCC0317BD8">
@@ -148,7 +163,7 @@
           <text>true</text>
         </outputEntry>
         <annotationEntry>
-          <text></text>
+          <text>5.75%</text>
         </annotationEntry>
       </rule>
       <rule id="_3D6E86CD-5C72-4E83-B071-C5A2EADFECB3">
@@ -168,7 +183,7 @@
           <text>true</text>
         </outputEntry>
         <annotationEntry>
-          <text></text>
+          <text>6.50%</text>
         </annotationEntry>
       </rule>
       <rule id="_2CE763A5-0C6B-4A4D-9C12-58BC4D1DA2E6">
@@ -188,7 +203,7 @@
           <text>true</text>
         </outputEntry>
         <annotationEntry>
-          <text></text>
+          <text>7.25%</text>
         </annotationEntry>
       </rule>
       <rule id="_5C4C7471-108B-4053-89D3-F2002E2D1443">
@@ -231,26 +246,442 @@
           <text></text>
         </annotationEntry>
       </rule>
+      <rule id="_CF7C17F9-C74D-4CA1-88BC-BB9541823B02">
+        <inputEntry id="_7EE50045-7774-4604-95C6-4C1213877FEE">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_E9D6C2FE-C946-4FFC-85A8-0986A086CA7F">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_AE5809E8-37A6-49EF-8D0D-5CFA12261B4D">
+          <text>&lt; 1</text>
+        </inputEntry>
+        <inputEntry id="_50259FC7-9B17-4B94-A8CB-33EE1662CC37">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_5E284AB4-0CD8-40DC-8E5E-CD1D93D5EF3D">
+          <text>false</text>
+        </outputEntry>
+        <annotationEntry>
+          <text>8.00%</text>
+        </annotationEntry>
+      </rule>
+      <rule id="_BF777EA3-584B-4707-907A-F347B3816EDB">
+        <inputEntry id="_2A59BF8B-72D1-41B9-82CC-7F4967A58FCA">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_4A20F3D7-3292-4BEE-BC89-A3AA2BF9CF64">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_D949C706-EB9C-483F-A84C-A37B93B75FE4">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_C979E1E3-9FFB-446B-9FE8-F91BA16BF1CD">
+          <text>&gt; 500K</text>
+        </inputEntry>
+        <outputEntry id="_CF1120A0-A5FD-4323-B676-26330FA22DEC">
+          <text>false</text>
+        </outputEntry>
+        <annotationEntry>
+          <text>7.00%</text>
+        </annotationEntry>
+      </rule>
+      <rule id="_DAF8CCCB-F5B0-46C7-BCB8-A49236545B43">
+        <inputEntry id="_3581DA85-8F86-48B5-B3D6-C72295AB60BA">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_02E805F2-BFEE-45A8-ADA3-AADCAE68794C">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_D67F2F62-50AA-4E3D-801B-791AAC263180">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_A1F7AE42-3EA5-49F5-84F6-375EAF8FA4D6">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_79B444B3-E052-4074-82D8-79525EE54FA2">
+          <text>false</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData name="Input Data from service" id="_D2912835-A317-4263-B2EA-E7649982DFB9">
+    <variable name="Input Data from service" id="_F9CEB871-D68A-4C4B-9E1F-DB1F9F18D819" />
+  </inputData>
+  <decisionService name="New Decision Service" id="_8AB95840-2F6F-4F45-8116-277FAEE42406">
+    <variable name="New Decision Service" id="_ED29D716-5537-4F33-8FDB-1E069F665019" />
+  </decisionService>
+  <decision name="New Decision" id="_4C7644BC-D137-4471-977A-C79ED21E8254">
+    <variable id="_8FD05655-F6E9-4C37-913C-523AADB91ED9" name="New Decision" />
+    <knowledgeRequirement id="_8376E881-9FC5-48F5-B7F7-0ECE9D85C481">
+      <requiredKnowledge href="#_8AB95840-2F6F-4F45-8116-277FAEE42406" />
+    </knowledgeRequirement>
+  </decision>
+  <decisionService name="New Decision Service" id="_14F5D225-9C64-4B31-A1FE-45B87AA7FCEE">
+    <variable name="New Decision Service" id="_6F0A6594-86A9-4EAF-B5F2-2F4200A29422" />
+  </decisionService>
+  <inputData name="New Input Data" id="_667441CC-E2FB-4B1B-BFBE-A63F67CEC114">
+    <variable name="New Input Data" id="_156D5CB9-7758-46B8-A2E6-262E1DC2E69E" />
+  </inputData>
+  <decision name="Output" id="_9D5A146C-F303-405B-BEE9-0AD1B0167BEF">
+    <variable name="Output" id="_480FC107-9BAF-4985-B15E-A5095EC43877" typeRef="&lt;Undefined&gt;" />
+    <informationRequirement id="_E3C7AAFE-352D-4A52-9913-0A4D1A28CAD4">
+      <requiredInput href="#_667441CC-E2FB-4B1B-BFBE-A63F67CEC114" />
+    </informationRequirement>
+    <decisionTable id="_E6858FF2-BB8E-44A9-99EF-CE617A7ABBCE" typeRef="&lt;Undefined&gt;" hitPolicy="UNIQUE" label="Output">
+      <input id="_A23ACEFB-C787-48CE-A7F7-E9950AFD0D3D">
+        <inputExpression id="_072E1C31-20C6-4E91-BAFA-4A9782328516" typeRef="Credit Score">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="_5DAF9DF2-CEA8-411A-8323-BCAAD24C89F9">
+        <inputExpression id="_CA957A05-0CB3-4830-BD75-E379A0931E83" typeRef="Annual Income">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="_FCF6472C-F3A7-47C5-8518-F204A4F420E6">
+        <inputExpression id="_C65097CE-C29B-41E3-BC79-DAE8C28680E0" typeRef="Employment Years">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="_0975D57F-4488-415D-9592-049252997061">
+        <inputExpression id="_C6AE0A69-B114-4D88-9391-54EAC3916DD5" typeRef="Loan Amount">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="_91E1C272-E548-448B-8FBC-A518131B0839" name="" typeRef="Decision" />
+      <output id="_86A94B7C-2C1A-4E6B-8613-117C2285F1AD" name="" typeRef="Rate" />
+      <annotation name="Annotations" />
+      <rule id="_E9ECB166-C533-40CD-B3C6-33AB282DF7E3">
+        <inputEntry id="_FCDA91C6-8914-4D8F-8A24-F0A4271A8AA1">
+          <text>≥ 780</text>
+        </inputEntry>
+        <inputEntry id="_9727E8F0-E423-422B-8391-4567EEECE0CD">
+          <text>≥ 100K</text>
+        </inputEntry>
+        <inputEntry id="_DCA88ABD-BA9E-42F4-BBC8-D2D682F4DF62">
+          <text>≥ 5</text>
+        </inputEntry>
+        <inputEntry id="_8CAEAC61-9DF5-463B-B66E-E346778B92E6">
+          <text>≤ 500K</text>
+        </inputEntry>
+        <outputEntry id="_85805846-CA57-4A90-AC6A-B7216B6736BA">
+          <text>approved</text>
+        </outputEntry>
+        <outputEntry id="_4747408D-AB42-464C-9933-C8E8F0206FB5">
+          <text>3.25%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_20473D24-8D75-4BA3-B49C-A19DBA66213C">
+        <inputEntry id="_BFF642FC-FB31-42DC-AA43-919EA606C9A6">
+          <text>≥ 780</text>
+        </inputEntry>
+        <inputEntry id="_F025FD88-228A-4944-A901-1F437D51EA44">
+          <text>≥ 100K</text>
+        </inputEntry>
+        <inputEntry id="_B5FADD3F-518A-4783-B9BF-27F877B19712">
+          <text>2–5</text>
+        </inputEntry>
+        <inputEntry id="_B91AE22D-C289-4166-BAA9-08A30F925E9C">
+          <text>≤ 500K</text>
+        </inputEntry>
+        <outputEntry id="_224B766E-B169-4284-A8C9-4E553782818B">
+          <text>approved</text>
+        </outputEntry>
+        <outputEntry id="_0FA47410-E29C-4681-9C0D-4D701A2A6F15">
+          <text>3.75%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_1F828E95-F010-4C78-BF5C-6259E470B4A0">
+        <inputEntry id="_3E5C023C-0206-46FE-BD00-2409A0799A66">
+          <text>≥ 780</text>
+        </inputEntry>
+        <inputEntry id="_42A57635-AEA6-482B-A0CC-C3D618AF6B0C">
+          <text>60–100K</text>
+        </inputEntry>
+        <inputEntry id="_42E17C60-C065-4857-97BF-E0E9B37AC6C3">
+          <text>≥ 3</text>
+        </inputEntry>
+        <inputEntry id="_25200021-826A-4209-BE5A-033185D334FD">
+          <text>≤ 300K</text>
+        </inputEntry>
+        <outputEntry id="_6228EE30-2BB7-4401-B775-8E7170BDA7A4">
+          <text>approved</text>
+        </outputEntry>
+        <outputEntry id="_E4A51097-CBE3-472E-BC4A-6F9732BA9169">
+          <text>4.00%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_6DA42B34-CC8D-4DC3-8BFA-5A619D82452F">
+        <inputEntry id="_FCD14460-B566-42D0-8AD0-1CF7FF32E0AA">
+          <text>700–780</text>
+        </inputEntry>
+        <inputEntry id="_3C1C3632-CD9A-4571-85EE-7A84BE3DFB2F">
+          <text>≥ 80K</text>
+        </inputEntry>
+        <inputEntry id="_3878E276-A570-482B-A5F2-1405DE841430">
+          <text>≥ 5</text>
+        </inputEntry>
+        <inputEntry id="_1B8D5BD8-724B-4B82-A745-A8FAE610F37F">
+          <text>≤ 400K</text>
+        </inputEntry>
+        <outputEntry id="_5BB533F5-422C-4777-9B79-31D9F2E664B5">
+          <text>approved</text>
+        </outputEntry>
+        <outputEntry id="_4A489E68-21F4-43AF-AD67-4F3F0834ECBD">
+          <text>4.50%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_4DD50B22-C201-470D-9022-950BE75DBBC4">
+        <inputEntry id="_66AFBEE2-84B9-46DC-8603-3407D9858537">
+          <text>700–780</text>
+        </inputEntry>
+        <inputEntry id="_E060304A-4CC7-4CF5-BCD1-8E9E019CAFBD">
+          <text>≥ 80K</text>
+        </inputEntry>
+        <inputEntry id="_0C463C21-AB6E-4373-B4BC-EFA5C116F90C">
+          <text>2–5</text>
+        </inputEntry>
+        <inputEntry id="_989D2ACD-E585-4421-8634-2A5BDC0F2262">
+          <text>≤ 300K</text>
+        </inputEntry>
+        <outputEntry id="_9A9F4C0C-269D-43D9-A681-CE83D3927F7A">
+          <text>approved</text>
+        </outputEntry>
+        <outputEntry id="_81EB8E74-46D5-4A45-A1F1-D50D05C9EE42">
+          <text>5.25%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_27ADADD4-9C40-44A4-ACF8-35216777A68D">
+        <inputEntry id="_469E6266-E16E-46A3-B179-4608B80C6C4D">
+          <text>700–780</text>
+        </inputEntry>
+        <inputEntry id="_F54C6EF5-4972-48B1-96B1-582D767AB5DE">
+          <text>50–80K</text>
+        </inputEntry>
+        <inputEntry id="_575EC45F-1C24-4679-B438-01778AFB2C24">
+          <text>≥ 3</text>
+        </inputEntry>
+        <inputEntry id="_1E52D871-4D72-422D-9CDA-BA7FA1A6749D">
+          <text>≤ 250K</text>
+        </inputEntry>
+        <outputEntry id="_7559AE2E-357D-4486-89EF-D505D7B590E5">
+          <text>review</text>
+        </outputEntry>
+        <outputEntry id="_953B2D19-C911-49A8-BEF2-00E4BB806C15">
+          <text>5.75%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_E2592F49-376D-4FC9-BCC3-39618B16F1BB">
+        <inputEntry id="_347DCFE0-1760-40C1-9228-69B8536285B2">
+          <text>650–700</text>
+        </inputEntry>
+        <inputEntry id="_03079129-A477-48E4-9408-5EB481378F49">
+          <text>≥ 70K</text>
+        </inputEntry>
+        <inputEntry id="_52C8C850-E534-412D-ABA6-C26D9FD31592">
+          <text>≥ 5</text>
+        </inputEntry>
+        <inputEntry id="_2772999C-E9F9-47F4-BA5C-A6D615174A04">
+          <text>≤ 200K</text>
+        </inputEntry>
+        <outputEntry id="_7DED1A2D-BB0B-4302-9F47-3EE19EDAB0E3">
+          <text>review</text>
+        </outputEntry>
+        <outputEntry id="_141F38D8-02CF-4F1C-8D26-2AAF2C15CD0C">
+          <text>6.50%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_4058F3EF-F390-4968-9CDB-6D02DCF29A2B">
+        <inputEntry id="_36DD0E3A-A02E-44A4-8811-40CF0219B3EA">
+          <text>650–700</text>
+        </inputEntry>
+        <inputEntry id="_554B8A02-0357-4E3A-8FD4-25BB108E165F">
+          <text>50–70K</text>
+        </inputEntry>
+        <inputEntry id="_FF7566B2-558B-4846-A527-D3784520645D">
+          <text>≥ 3</text>
+        </inputEntry>
+        <inputEntry id="_3646FAB1-37B7-4FA7-9238-C423B8C5C72F">
+          <text>≤ 150K</text>
+        </inputEntry>
+        <outputEntry id="_65B39121-6C20-4557-80D6-68BC30727183">
+          <text>review</text>
+        </outputEntry>
+        <outputEntry id="_5DC1E35B-FA56-4B8C-BFCD-CD421A78BA39">
+          <text>7.25%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_0159214F-83F1-481E-8BDF-2998DFED0BFD">
+        <inputEntry id="_A235B27F-DD3A-4288-BD18-8038692E0123">
+          <text>650–700</text>
+        </inputEntry>
+        <inputEntry id="_8963930D-C89B-4FDA-BFAB-371DDD03AB67">
+          <text>&lt; 50K</text>
+        </inputEntry>
+        <inputEntry id="_78C3BD4C-AF94-465D-AE73-FB52F4DD9398">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_969F7752-6106-4D05-8DB4-81B0258921CE">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_294819BC-CE55-4490-A96C-B85C5DC10DED">
+          <text>denied</text>
+        </outputEntry>
+        <outputEntry id="_873EE44E-232C-4A55-B68A-34D93FCC14A3">
+          <text>—</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_3C71DDDB-1C82-4CCB-809C-9DBF01006FE5">
+        <inputEntry id="_0AE24989-9039-4452-B040-4CB4E65B8EFA">
+          <text>&lt; 650</text>
+        </inputEntry>
+        <inputEntry id="_AFE0B070-31E2-4999-8F2B-33579FD21A01">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_927D64A3-DE14-4A41-9290-B2287A05FB6B">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_4E2ED36B-C138-4BB0-8828-7CF937501ECE">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_83485A72-486A-470A-A2B4-AC591D9E0DA8">
+          <text>denied</text>
+        </outputEntry>
+        <outputEntry id="_527E6874-9BF6-4F3A-B77A-6728557D5B3E">
+          <text>—</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_7F5F3DEC-2219-49EA-8730-3C5ECC269F54">
+        <inputEntry id="_3846D4EA-1571-4A01-B7F0-9EC0129645AC">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_812191E1-BF2D-4C8A-A216-264CC8F82A02">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_342F39F6-E96F-44A1-9F0F-1662B866503A">
+          <text>&lt; 1</text>
+        </inputEntry>
+        <inputEntry id="_D28467B8-0C5F-485D-A9A0-F5317DE61773">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_D8C318E4-5D48-492D-A49B-686E34B85723">
+          <text>review</text>
+        </outputEntry>
+        <outputEntry id="_37B2783B-BDB8-4950-9A66-7D6B9E1B57CA">
+          <text>8.00%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_4CB149F1-9881-413A-A47E-C895370FD49F">
+        <inputEntry id="_8E3226A1-0A23-4279-9597-B2389A1B00B1">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_A9280B31-1A29-4BF5-85E8-2DD13427568C">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_8C1D7FB4-008B-4B35-BE71-FCAE535BBB28">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_4D874970-4BC3-44F0-8B95-41849DF5E98B">
+          <text>&gt; 500K</text>
+        </inputEntry>
+        <outputEntry id="_9D2EF46C-8BE7-415D-A463-CB624513BC6C">
+          <text>review</text>
+        </outputEntry>
+        <outputEntry id="_81AC98D3-AAA8-44A8-9E7F-F3F2219FAE3E">
+          <text>7.00%</text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
+      <rule id="_AE9497B4-11EA-44F3-978D-5619BA827F52">
+        <inputEntry id="_DEDBEC3C-A986-40BD-895F-9EE5600EA5B0">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_2AA2877A-4C53-4757-97DB-6E5DDE0FD1D6">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_C289576D-EFA9-4B9F-8F9A-4DA119E8506E">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="_445931D9-597E-4BF2-8538-8B3E7BB16D2A">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="_8D63AA62-F0F2-4274-9B0C-E1C1F2C9BB3D">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="_454099CB-0745-4EC5-8262-31AF29A59006">
+          <text></text>
+        </outputEntry>
+        <annotationEntry>
+          <text></text>
+        </annotationEntry>
+      </rule>
     </decisionTable>
   </decision>
   <dmndi:DMNDI>
-    <dmndi:DMNDiagram id="_2AA4A811-BBFA-4B40-925F-BF854DBCA3FA" name="Default DRD" useAlternativeInputDataShape="false">
+    <dmndi:DMNDiagram id="_5D08EC06-FB10-4029-9094-4FBE27517407" name="Default DRD" useAlternativeInputDataShape="false">
       <di:extension>
         <kie:ComponentsWidthsExtension>
-          <kie:ComponentWidths dmnElementRef="_FD353944-8BD8-4D63-B410-7E81077BA06A">
+          <kie:ComponentWidths dmnElementRef="_E6858FF2-BB8E-44A9-99EF-CE617A7ABBCE">
             <kie:width>60</kie:width>
             <kie:width>118</kie:width>
             <kie:width>100</kie:width>
             <kie:width>100</kie:width>
             <kie:width>100</kie:width>
-            <kie:width>118</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>100</kie:width>
             <kie:width>240</kie:width>
           </kie:ComponentWidths>
         </kie:ComponentsWidthsExtension>
       </di:extension>
-      <dmndi:DMNShape id="_BB47CCFA-730B-444D-8B94-2B6392BB6C87" dmnElementRef="_52955DF7-7C78-47B4-9ACF-C76ACD3AA4D1" isCollapsed="false" isListedInputData="false">
-        <dc:Bounds x="100" y="100" width="160" height="80" />
+      <dmndi:DMNShape id="_785DF71F-D70E-4C80-A414-26FDD3FCB6B9" dmnElementRef="_667441CC-E2FB-4B1B-BFBE-A63F67CEC114" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="180" y="940" width="160" height="80" />
       </dmndi:DMNShape>
+      <dmndi:DMNShape id="_58CF5265-7601-4725-A9A5-FFE62377DDF5" dmnElementRef="_9D5A146C-F303-405B-BEE9-0AD1B0167BEF" isCollapsed="false" isListedInputData="false">
+        <dc:Bounds x="480" y="940" width="160" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="_3D9612BE-039B-41F3-9EED-E2E1825BF252" dmnElementRef="_E3C7AAFE-352D-4A52-9913-0A4D1A28CAD4" sourceElement="_785DF71F-D70E-4C80-A414-26FDD3FCB6B9" targetElement="_58CF5265-7601-4725-A9A5-FFE62377DDF5">
+        <di:waypoint x="260" y="980" />
+        <di:waypoint x="480" y="980" />
+      </dmndi:DMNEdge>
     </dmndi:DMNDiagram>
   </dmndi:DMNDI>
 </definitions>
