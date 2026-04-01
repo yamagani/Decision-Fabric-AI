@@ -15,4 +15,6 @@ data class RuleAuditRecord(
 
 interface RuleAuditPort {
     fun append(record: RuleAuditRecord)
+    /** Deletes audit records older than [cutoff]. Returns the number of records deleted. */
+    fun purgeOlderThan(cutoff: Instant): Int
 }

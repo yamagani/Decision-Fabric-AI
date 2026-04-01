@@ -18,6 +18,10 @@ interface RuleRepositoryPort {
     fun existsRuleSetByName(name: String): Boolean
     fun countRulesInSet(ruleSetId: RuleSetId): Int
     fun countActiveRulesInSet(ruleSetId: RuleSetId): Int
+    /** Batch fetch (total, active) counts for multiple rule sets in a single query. */
+    fun countRulesPerSet(ruleSetIds: List<RuleSetId>): Map<RuleSetId, Pair<Int, Int>>
+    /** Batch fetch names for multiple rule sets in a single query. */
+    fun findRuleSetNamesByIds(ruleSetIds: List<RuleSetId>): Map<RuleSetId, String>
 
     // --- Rule ---
     fun saveRule(rule: Rule): Rule

@@ -78,6 +78,13 @@ dmn:
 rule:
   cache:
     max-bytes-mb: ${RULE_CACHE_MAX_BYTES_MB:200}
+  validation:
+    max-dmn-size-bytes: ${RULE_MAX_DMN_SIZE_BYTES:1048576}
+  audit:
+    retention-days: ${RULE_AUDIT_RETENTION_DAYS:2555}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
 
 ai:
   provider:

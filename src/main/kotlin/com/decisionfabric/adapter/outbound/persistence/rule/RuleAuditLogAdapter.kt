@@ -5,6 +5,7 @@ import com.decisionfabric.application.rule.RuleAuditRecord
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.sql.Timestamp
+import java.time.Instant
 import java.util.UUID
 
 @Repository
@@ -29,4 +30,10 @@ class RuleAuditLogAdapter(
             Timestamp.from(record.occurredAt)
         )
     }
+
+    override fun purgeOlderThan(cutoff: Instant): Int =
+        jdbcTemplate.update(
+            "DELETE FROM rule_audit_log WHERE occurred_at < ?",
+            Timestamp.from(cutoff)
+        )
 }

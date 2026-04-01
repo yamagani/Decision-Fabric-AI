@@ -46,7 +46,8 @@ class RuleManagementService(
     private val ruleRepositoryPort: RuleRepositoryPort,
     private val dmnSchemaValidatorPort: com.decisionfabric.application.ports.out.DmnSchemaValidatorPort,
     private val ruleAuditPort: RuleAuditPort,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
+    private val ruleValidationProperties: RuleValidationProperties
 ) : RuleManagementUseCase {
 
     // -------------------------------------------------------------------------
@@ -92,12 +93,11 @@ class RuleManagementService(
     @Transactional(readOnly = true)
     override fun listRuleSets(page: Int, size: Int, includeInactive: Boolean): PagedRuleSetView {
         val result: PagedResult<RuleSet> = ruleRepositoryPort.findAllRuleSets(page, size, includeInactive)
+        val counts = ruleRepositoryPort.countRulesPerSet(result.content.map { it.id })
         return PagedRuleSetView(
             content = result.content.map { rs ->
-                rs.toView(
-                    ruleCount = ruleRepositoryPort.countRulesInSet(rs.id),
-                    activeRuleCount = ruleRepositoryPort.countActiveRulesInSet(rs.id)
-                )
+                val (total, active) = counts[rs.id] ?: Pair(0, 0)
+                rs.toView(ruleCount = total, activeRuleCount = active)
             },
             page = result.page,
             size = result.size,
@@ -229,11 +229,12 @@ class RuleManagementService(
         includeInactive: Boolean
     ): PagedRuleView {
         val result = ruleRepositoryPort.findAllRules(ruleSetId, page, size, search, includeInactive)
-        val ruleSetNames = mutableMapOf<RuleSetId, String>()
+        val ruleSetIds = result.content.map { it.ruleSetId }.distinct()
+        val ruleSetNames = ruleRepositoryPort.findRuleSetNamesByIds(ruleSetIds)
         return PagedRuleView(
             content = result.content.map { rule ->
                 rule.toView(
-                    ruleSetName = ruleSetNames.getOrPut(rule.ruleSetId) { loadRuleSetName(rule.ruleSetId) }
+                    ruleSetName = ruleSetNames[rule.ruleSetId] ?: rule.ruleSetId.value.toString()
                 )
             },
             page = result.page,
@@ -430,9 +431,8 @@ class RuleManagementService(
 
     @Transactional(readOnly = true)
     override fun validateDmn(command: ValidateDmnCommand): DmnValidationResultView {
-        // Size guard: 1 MB max for validation
-        if (command.dmnXml.toByteArray(Charsets.UTF_8).size > 1_048_576) {
-            throw ValidationException("DMN XML exceeds 1 MB size limit")
+        if (command.dmnXml.toByteArray(Charsets.UTF_8).size > ruleValidationProperties.maxDmnSizeBytes) {
+            throw ValidationException("DMN XML exceeds ${ruleValidationProperties.maxDmnSizeBytes} bytes size limit")
         }
         val result = dmnSchemaValidatorPort.validate(command.dmnXml)
         return DmnValidationResultView(valid = result.isValid, errors = result.errors)
@@ -451,8 +451,8 @@ class RuleManagementService(
     }
 
     private fun validatedDmnXml(rawXml: String, correlationId: String): DmnXmlContent {
-        if (rawXml.toByteArray(Charsets.UTF_8).size > 1_048_576) {
-            throw ValidationException("DMN XML exceeds 1 MB size limit")
+        if (rawXml.toByteArray(Charsets.UTF_8).size > ruleValidationProperties.maxDmnSizeBytes) {
+            throw ValidationException("DMN XML exceeds ${ruleValidationProperties.maxDmnSizeBytes} bytes size limit")
         }
         val result = dmnSchemaValidatorPort.validate(rawXml)
         if (!result.isValid) {

@@ -42,7 +42,7 @@ class RuleManagementServiceTest {
     private val auditPort: RuleAuditPort = mockk(relaxed = true)
     private val eventPublisher: ApplicationEventPublisher = mockk(relaxed = true)
 
-    private val service = RuleManagementService(ruleRepo, validator, auditPort, eventPublisher)
+    private val service = RuleManagementService(ruleRepo, validator, auditPort, eventPublisher, RuleValidationProperties())
 
     private val validDmn = "<definitions xmlns=\"https://www.omg.org/spec/DMN/20191111/MODEL/\" id=\"d\" name=\"d\" namespace=\"ns\"/>"
     private val ruleSetId = RuleSetId.generate()

@@ -14,6 +14,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.UUID
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 class InMemoryRuleCacheTest {
 
@@ -143,6 +146,35 @@ class InMemoryRuleCacheTest {
             threads.forEach { it.join(2000) }
 
             assertThat(cache.size()).isEqualTo(10)
+        }
+
+        @Test
+        fun `concurrent inserts keep byte counter consistent with actual cache contents`() {
+            val rules = (1..20).map { aRule() }
+            every { ruleRepo.findAllActiveRules() } returns emptyList()
+            rules.forEach { rule -> every { ruleRepo.findRuleById(rule.id) } returns rule }
+
+            val cache = InMemoryRuleCache(ruleRepo, maxBytesMb = 200)
+
+            val pool = Executors.newFixedThreadPool(20)
+            val latch = CountDownLatch(1)
+            val futures = rules.map { rule ->
+                pool.submit {
+                    latch.await()
+                    cache.onVersionActivated(
+                        RuleLifecycleEvent.RuleVersionActivated(ruleId = rule.id, version = 1, userId = "stress")
+                    )
+                }
+            }
+            latch.countDown()
+            futures.forEach { it.get(10, TimeUnit.SECONDS) }
+            pool.shutdown()
+
+            // Byte counter must exactly match the sum of bytes in the cache
+            val expectedBytes = cache.getAllActiveEntries().sumOf { it.estimatedBytes }
+            assertThat(cache.getCurrentBytes())
+                .describedAs("byte counter must match sum of cached entry sizes")
+                .isEqualTo(expectedBytes)
         }
     }
 }

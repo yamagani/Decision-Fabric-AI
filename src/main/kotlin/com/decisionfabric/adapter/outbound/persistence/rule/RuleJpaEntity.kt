@@ -52,7 +52,7 @@ class RuleJpaEntity(
         mappedBy = "ruleId",
         cascade = [CascadeType.ALL],
         orphanRemoval = true,
-        fetch = FetchType.EAGER
+        fetch = FetchType.LAZY
     )
     @OrderBy("version ASC")
     val versionEntities: MutableList<RuleVersionJpaEntity> = mutableListOf()

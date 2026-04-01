@@ -38,11 +38,7 @@ class PostgreSqlRuleRepositoryAdapter(
 
     @Transactional
     override fun findRuleSetByIdForUpdate(id: RuleSetId): RuleSet? =
-        ruleJpaRepository.findByIdForUpdate(id.value)
-            .map { mapper.toDomain(ruleSetJpaRepository.findById(id.value).get()) }
-            .orElse(
-                ruleSetJpaRepository.findById(id.value).map { mapper.toDomain(it) }.orElse(null)
-            )
+        ruleSetJpaRepository.findByIdForUpdate(id.value).map { mapper.toDomain(it) }.orElse(null)
 
     @Transactional(readOnly = true)
     override fun findAllRuleSets(page: Int, size: Int, includeInactive: Boolean): PagedResult<RuleSet> {
@@ -72,6 +68,22 @@ class PostgreSqlRuleRepositoryAdapter(
     @Transactional(readOnly = true)
     override fun countActiveRulesInSet(ruleSetId: RuleSetId): Int =
         ruleJpaRepository.countActiveByRuleSetId(ruleSetId.value)
+
+    @Transactional(readOnly = true)
+    override fun countRulesPerSet(ruleSetIds: List<RuleSetId>): Map<RuleSetId, Pair<Int, Int>> {
+        if (ruleSetIds.isEmpty()) return emptyMap()
+        return ruleJpaRepository.countsByRuleSetIds(ruleSetIds.map { it.value })
+            .associate { row ->
+                RuleSetId(row.getRuleSetId()) to Pair(row.getTotal().toInt(), row.getActive().toInt())
+            }
+    }
+
+    @Transactional(readOnly = true)
+    override fun findRuleSetNamesByIds(ruleSetIds: List<RuleSetId>): Map<RuleSetId, String> {
+        if (ruleSetIds.isEmpty()) return emptyMap()
+        return ruleSetJpaRepository.findAllById(ruleSetIds.map { it.value })
+            .associate { entity -> RuleSetId(entity.id) to entity.name }
+    }
 
     // -------------------------------------------------------------------------
     // Rule

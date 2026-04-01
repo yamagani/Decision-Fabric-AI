@@ -12,7 +12,8 @@ import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * In-memory cache for active rule versions.
@@ -29,7 +30,10 @@ class InMemoryRuleCache(
 
     // key: ruleId -> list of active versions for that rule
     private val cache: ConcurrentHashMap<UUID, List<CachedRuleVersion>> = ConcurrentHashMap()
-    private val currentBytes = AtomicLong(0)
+    // cacheLock guards all compound read-modify-write operations on currentBytes so that
+    // the byte counter stays consistent under concurrent insertions/evictions.
+    private val cacheLock = ReentrantLock()
+    private var currentBytesCount = 0L  // guarded by cacheLock
 
     // -------------------------------------------------------------------------
     // API
@@ -43,7 +47,7 @@ class InMemoryRuleCache(
     fun getAllActiveEntries(): List<CachedRuleVersion> =
         cache.values.flatten()
 
-    fun getCurrentBytes(): Long = currentBytes.get()
+    fun getCurrentBytes(): Long = cacheLock.withLock { currentBytesCount }
 
     fun size(): Int = cache.size
 
@@ -72,7 +76,7 @@ class InMemoryRuleCache(
                 loaded++
             }
         }
-        log.info("InMemoryRuleCache: warm-up complete — $loaded rules cached, ${currentBytes.get()} bytes")
+        log.info("InMemoryRuleCache: warm-up complete — $loaded rules cached, ${getCurrentBytes()} bytes")
     }
 
     // -------------------------------------------------------------------------
@@ -104,69 +108,69 @@ class InMemoryRuleCache(
     // -------------------------------------------------------------------------
 
     private fun refreshRule(ruleId: com.decisionfabric.domain.rule.RuleId) {
-        val rule = ruleRepositoryPort.findRuleById(ruleId)
-        if (rule == null) {
-            evict(ruleId.value)
-            return
-        }
-        val activeVersions = rule.versions
-            .filter { it.status == RuleVersionStatus.ACTIVE }
-            .map { v ->
-                CachedRuleVersion(
-                    ruleId = ruleId.value,
-                    version = v.version,
-                    dmnXml = v.dmnXml.value,
-                    activatedAt = v.activatedAt ?: rule.createdAt
-                )
+        try {
+            val rule = ruleRepositoryPort.findRuleById(ruleId)
+            if (rule == null) {
+                evict(ruleId.value)
+                return
             }
-        if (activeVersions.isEmpty()) {
-            evict(ruleId.value)
-        } else {
-            putIfCapacity(ruleId.value, activeVersions)
+            val activeVersions = rule.versions
+                .filter { it.status == RuleVersionStatus.ACTIVE }
+                .map { v ->
+                    CachedRuleVersion(
+                        ruleId = ruleId.value,
+                        version = v.version,
+                        dmnXml = v.dmnXml.value,
+                        activatedAt = v.activatedAt ?: rule.createdAt
+                    )
+                }
+            if (activeVersions.isEmpty()) {
+                evict(ruleId.value)
+            } else {
+                putIfCapacity(ruleId.value, activeVersions)
+            }
+        } catch (ex: Exception) {
+            log.warn("InMemoryRuleCache: failed to refresh cache for rule ${ruleId.value} — cache may be stale", ex)
         }
     }
 
     private fun evict(ruleId: UUID) {
-        cache.compute(ruleId) { _, existing ->
+        cacheLock.withLock {
+            val existing = cache.remove(ruleId)
             if (existing != null) {
-                val freed = existing.sumOf { it.estimatedBytes }
-                currentBytes.addAndGet(-freed)
+                currentBytesCount -= existing.sumOf { it.estimatedBytes }
             }
-            null
         }
     }
 
     private fun putIfCapacity(ruleId: UUID, versions: List<CachedRuleVersion>) {
-        cache.compute(ruleId) { _, existing ->
-            // Free up bytes from old versions
+        cacheLock.withLock {
+            val existing = cache[ruleId]
             if (existing != null) {
-                currentBytes.addAndGet(-existing.sumOf { it.estimatedBytes })
+                currentBytesCount -= existing.sumOf { it.estimatedBytes }
             }
             val newBytes = versions.sumOf { it.estimatedBytes }
-            val projected = currentBytes.get() + newBytes
-            if (projected > maxBytes) {
-                evictOldest(newBytes)
+            if (currentBytesCount + newBytes > maxBytes) {
+                evictOldestUnderLock(newBytes)
             }
-            currentBytes.addAndGet(newBytes)
-            versions
+            currentBytesCount += newBytes
+            cache[ruleId] = versions
         }
     }
 
-    /** Evict entries (oldest activatedAt first) until we free at least `needed` bytes. */
-    private fun evictOldest(needed: Long) {
+    /** Evict entries (oldest activatedAt first) until we free at least `needed` bytes. Must be called with cacheLock held. */
+    private fun evictOldestUnderLock(needed: Long) {
         val candidates = cache.entries
             .sortedBy { (_, versions) -> versions.minOf { it.activatedAt } }
             .iterator()
         var freed = 0L
         while (freed < needed && candidates.hasNext()) {
             val entry = candidates.next()
-            cache.compute(entry.key) { _, existing ->
-                if (existing != null) {
-                    val bytes = existing.sumOf { it.estimatedBytes }
-                    freed += bytes
-                    currentBytes.addAndGet(-bytes)
-                }
-                null
+            val existing = cache.remove(entry.key)
+            if (existing != null) {
+                val bytes = existing.sumOf { it.estimatedBytes }
+                freed += bytes
+                currentBytesCount -= bytes
             }
         }
         if (freed < needed) {

@@ -3,6 +3,7 @@ package com.decisionfabric.adapter.outbound.persistence.rule
 import jakarta.persistence.LockModeType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Lock
 import org.springframework.data.jpa.repository.Query
@@ -12,10 +13,15 @@ import java.util.UUID
 
 interface RuleJpaRepository : JpaRepository<RuleJpaEntity, UUID> {
 
+    @EntityGraph(attributePaths = ["versionEntities"])
+    override fun findById(id: UUID): Optional<RuleJpaEntity>
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @EntityGraph(attributePaths = ["versionEntities"])
     @Query("SELECT r FROM RuleJpaEntity r WHERE r.id = :id")
     fun findByIdForUpdate(@Param("id") id: UUID): Optional<RuleJpaEntity>
 
+    @EntityGraph(attributePaths = ["versionEntities"])
     @Query("""
         SELECT r FROM RuleJpaEntity r
         WHERE (:ruleSetId IS NULL OR r.ruleSetId = :ruleSetId)
@@ -30,6 +36,7 @@ interface RuleJpaRepository : JpaRepository<RuleJpaEntity, UUID> {
         pageable: Pageable
     ): Page<RuleJpaEntity>
 
+    @EntityGraph(attributePaths = ["versionEntities"])
     @Query("SELECT r FROM RuleJpaEntity r WHERE r.status = 'ACTIVE'")
     fun findAllActive(): List<RuleJpaEntity>
 
@@ -50,4 +57,20 @@ interface RuleJpaRepository : JpaRepository<RuleJpaEntity, UUID> {
 
     @Query("SELECT COUNT(r) FROM RuleJpaEntity r WHERE r.ruleSetId = :ruleSetId AND r.status = 'ACTIVE'")
     fun countActiveByRuleSetId(@Param("ruleSetId") ruleSetId: UUID): Int
+
+    @Query("""
+        SELECT r.ruleSetId as ruleSetId,
+               COUNT(r) as total,
+               SUM(CASE WHEN r.status = 'ACTIVE' THEN 1L ELSE 0L END) as active
+        FROM RuleJpaEntity r
+        WHERE r.ruleSetId IN :ruleSetIds
+        GROUP BY r.ruleSetId
+    """)
+    fun countsByRuleSetIds(@Param("ruleSetIds") ruleSetIds: List<UUID>): List<RuleCountProjection>
+}
+
+interface RuleCountProjection {
+    fun getRuleSetId(): UUID
+    fun getTotal(): Long
+    fun getActive(): Long
 }
